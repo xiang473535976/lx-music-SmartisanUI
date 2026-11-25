@@ -1,25 +1,18 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 
-// import { useGetter, useDispatch } from '@/store'
+import { Icon } from '@/components/common/Icon'
 import SortTab, { type SortTabProps, type SortTabType } from './SortTab'
-// import Tag from './Tag'
-// import OpenList from './OpenList'
+import FilterPopup, { type FilterPopupType } from './FilterPopup'
 import { createStyle } from '@/utils/tools'
-// import { BorderWidths } from '@/theme'
-import SourceSelector, {
-  type SourceSelectorType,
-  type SourceSelectorProps,
-} from './SourceSelector'
+import { type SourceSelectorProps } from './SourceSelector'
 import { type Source } from '@/store/songlist/state'
-// import { useTheme } from '@/store/theme/hook'
-import Tag, { type TagType, type TagProps } from './Tag'
-import OpenList, { type OpenListType } from './OpenList'
-// import { BorderWidths } from '@/theme'
+
+const HAMMER_TEXT = '#4d4d4d'
 
 export interface HeaderBarProps {
   onSortChange: SortTabProps['onSortChange']
-  onTagChange: TagProps['onTagChange']
+  onTagChange: (name: string, id: string) => void
   onSourceChange: SourceSelectorProps['onSourceChange']
 }
 
@@ -27,20 +20,18 @@ export interface HeaderBarType {
   setSource: (source: Source, sortId: string, tagName: string, tagId: string) => void
 }
 
-
+/**
+ * 歌单页顶栏：只保留排序分段与标签，音源选择与打开歌单收进右侧筛选弹层。
+ */
 export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagChange, onSourceChange }, ref) => {
   const sortTabRef = useRef<SortTabType>(null)
-  const tagRef = useRef<TagType>(null)
-  const openListRef = useRef<OpenListType>(null)
-  const sourceSelectorRef = useRef<SourceSelectorType>(null)
-  // const theme = useTheme()
+  const filterRef = useRef<FilterPopupType>(null)
 
   useImperativeHandle(ref, () => ({
     setSource(source, sortId, tagName, tagId) {
       sortTabRef.current?.setSource(source, sortId)
-      tagRef.current?.setSelectedTagInfo(source, tagName, tagId)
-      sourceSelectorRef.current?.setSource(source)
-      openListRef.current?.setInfo(source)
+      filterRef.current?.setSource(source)
+      filterRef.current?.setTagInfo(source, tagName, tagId)
     },
   }), [])
 
@@ -48,9 +39,10 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
   return (
     <View style={styles.searchBar}>
       <SortTab ref={sortTabRef} onSortChange={onSortChange} />
-      <Tag ref={tagRef} onTagChange={onTagChange} />
-      <OpenList ref={openListRef} />
-      <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
+      <TouchableOpacity style={styles.filterBtn} activeOpacity={0.6} onPress={() => { filterRef.current?.show() }}>
+        <Icon name="menu" size={18} color={HAMMER_TEXT} />
+      </TouchableOpacity>
+      <FilterPopup ref={filterRef} onSourceChange={onSourceChange} onTagChange={onTagChange} />
     </View>
   )
 })
@@ -59,11 +51,16 @@ const styles = createStyle({
   searchBar: {
     flexDirection: 'row',
     height: 38,
+    alignItems: 'center',
     zIndex: 2,
-    // paddingRight: 10,
-    // borderBottomWidth: BorderWidths.normal,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
   },
-  selector: {
-    width: 86,
+  filterBtn: {
+    width: 46,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })

@@ -2,17 +2,18 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { View, PanResponder } from 'react-native'
 import { useDrag } from '@/utils/hooks'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 // import { scaleSizeW } from '@/utils/pixelRatio'
 // import { AppColors } from '@/theme'
 
+// 锤子风进度条配色
+const TRACK_COLOR = '#e5e5e5'
+const BUFFERED_COLOR = '#f0c4c4'
+const PLAYED_COLOR = '#E64040'
 
 const DefaultBar = memo(() => {
-  // const theme = useTheme()
-
   return <View style={{
     ...styles.progressBar,
-    // backgroundColor: theme['c-primary-light-200-alpha-900'],
+    backgroundColor: TRACK_COLOR,
     position: 'absolute',
     width: '100%',
     left: 0,
@@ -21,9 +22,7 @@ const DefaultBar = memo(() => {
 })
 
 const BufferedBar = memo(({ progress }: { progress: number }) => {
-  // console.log(bufferedProgress)
-  const theme = useTheme()
-  return <View style={{ ...styles.progressBar, backgroundColor: theme['c-primary-light-600-alpha-900'], position: 'absolute', width: `${progress * 100}%`, left: 0, top: 0 }}></View>
+  return <View style={{ ...styles.progressBar, backgroundColor: BUFFERED_COLOR, position: 'absolute', width: `${progress * 100}%`, left: 0, top: 0 }}></View>
 })
 
 const PreassBar = memo(({ onDragState, setDragProgress, onSetProgress }: {
@@ -74,7 +73,6 @@ export const ProgressPlain = ({ progress, duration, buffered, paddingTop }: {
   paddingTop?: number
 }) => {
   // const { progress } = usePlayTimeBuffer()
-  const theme = useTheme()
   // console.log(progress)
   const progressStr: `${number}%` = `${progress * 100}%`
 
@@ -88,7 +86,7 @@ export const ProgressPlain = ({ progress, duration, buffered, paddingTop }: {
       <View style={{ flex: 1 }}>
         <DefaultBar />
         <BufferedBar progress={buffered} />
-        <View style={{ ...styles.progressBar, backgroundColor: theme['c-primary-alpha-900'], width: progressStr, position: 'absolute', left: 0, top: 0 }} />
+        <View style={{ ...styles.progressBar, backgroundColor: PLAYED_COLOR, width: progressStr, position: 'absolute', left: 0, top: 0 }} />
       </View>
       <View style={styles.pressBar} />
     </View>
@@ -102,7 +100,6 @@ const Progress = ({ progress, duration, buffered, paddingTop }: {
   paddingTop?: number
 }) => {
   // const { progress } = usePlayTimeBuffer()
-  const theme = useTheme()
   const [draging, setDraging] = useState(false)
   const [dragProgress, setDragProgress] = useState(0)
   // console.log(progress)
@@ -125,11 +122,11 @@ const Progress = ({ progress, duration, buffered, paddingTop }: {
           draging
             ? (
                 <>
-                  <View style={{ ...styles.progressBar, backgroundColor: theme['c-primary-light-200-alpha-900'], width: progressStr, position: 'absolute', left: 0, top: 0 }} />
-                  <View style={{ ...styles.progressBar, backgroundColor: theme['c-primary-light-100-alpha-800'], width: `${dragProgress * 100}%`, position: 'absolute', left: 0, top: 0 }} />
+                  <View style={{ ...styles.progressBar, backgroundColor: '#f7b0b0', width: progressStr, position: 'absolute', left: 0, top: 0 }} />
+                  <View style={{ ...styles.progressBar, backgroundColor: PLAYED_COLOR, width: `${dragProgress * 100}%`, position: 'absolute', left: 0, top: 0 }} />
                 </>
               ) : (
-                <View style={{ ...styles.progressBar, backgroundColor: theme['c-primary-alpha-900'], width: progressStr, position: 'absolute', left: 0, top: 0 }} />
+                <View style={{ ...styles.progressBar, backgroundColor: PLAYED_COLOR, width: progressStr, position: 'absolute', left: 0, top: 0 }} />
               )
         }
       </View>

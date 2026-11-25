@@ -4,10 +4,8 @@ import { Animated, View, TouchableOpacity } from 'react-native'
 import Text from '@/components/common/Text'
 import Input, { type InputType } from '@/components/common/Input'
 
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
-import { BorderWidths } from '@/theme'
 
 interface SearchInputProps {
   onSearch: (keywork: string) => void
@@ -53,8 +51,6 @@ export default forwardRef<ListSearchBarType, ListSearchBarProps>(({ onSearch, on
   const animFade = useRef(new Animated.Value(0)).current
   const animTranslateY = useRef(new Animated.Value(0)).current
   const searchInputRef = useRef<SearchInputType>(null)
-
-  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -116,13 +112,13 @@ export default forwardRef<ListSearchBarType, ListSearchBarProps>(({ onSearch, on
 
   const animaStyle = useMemo(() => ({
     ...styles.container,
-    // backgroundColor: theme['c-content-background'],
-    borderBottomColor: theme['c-border-background'],
+    // backgroundColor: '#ffffff',
+    borderBottomColor: HAMMER_LINE,
     opacity: animFade, // Bind opacity to animated value
     transform: [
       { translateY: animTranslateY },
     ],
-  }), [animFade, animTranslateY, theme])
+  }), [animFade, animTranslateY])
 
   const component = useMemo(() => {
     return (
@@ -131,14 +127,18 @@ export default forwardRef<ListSearchBarType, ListSearchBarProps>(({ onSearch, on
           <SearchInput ref={searchInputRef} onSearch={onSearch} />
         </View>
         <TouchableOpacity onPress={onExitSearch} style={styles.btn}>
-          <Text color={theme['c-button-font']}>{t('list_select_cancel')}</Text>
+          <Text color={HAMMER_TEXT}>{t('list_select_cancel')}</Text>
         </TouchableOpacity>
       </Animated.View>
     )
-  }, [animaStyle, onSearch, onExitSearch, theme, t])
+  }, [animaStyle, onSearch, onExitSearch, t])
 
   return !visible && animatePlayed ? null : component
 })
+
+// 锤子风配色
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ededed'
 
 const styles = createStyle({
   container: {
@@ -150,7 +150,7 @@ const styles = createStyle({
     height: '100%',
     flexDirection: 'row',
     paddingLeft: 10,
-    borderBottomWidth: BorderWidths.normal,
+    borderBottomWidth: 0.5,
   },
   content: {
     flexDirection: 'row',

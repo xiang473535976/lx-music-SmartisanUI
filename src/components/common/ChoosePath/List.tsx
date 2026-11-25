@@ -9,7 +9,6 @@ import Header from './components/Header'
 import Main from './components/Main'
 import Footer from './components/Footer'
 import { sizeFormate } from '@/utils'
-import { useTheme } from '@/store/theme/hook'
 import { type PathItem } from './components/ListItem'
 // import { getSelectedManagedFolder } from '@/utils/data'
 // let prevPath = externalStorageDirectoryPath
@@ -93,7 +92,6 @@ export default forwardRef<ListType, ListProps>(({
   const readOptions = useRef<ReadOptions>(initReadOptions as ReadOptions)
   const [isReading, setIsReading] = useState(false)
   const modalRef = useRef<ModalType>(null)
-  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     show(title, dir = '', dirOnly = false, filter) {
@@ -174,7 +172,7 @@ export default forwardRef<ListType, ListProps>(({
 
   return (
     <Modal ref={modalRef} bgHide={false} statusBarPadding={false}>
-      <View style={{ ...styles.container, backgroundColor: theme['c-content-background'] }}>
+      <View style={{ ...styles.container, backgroundColor: '#ffffff' }}>
         <Header
           onRefreshDir={async(path) => readDir(path, readOptions.current.dirOnly, readOptions.current.filter, true)}
           onOpenDir={async(path) => readDir(path, readOptions.current.dirOnly, readOptions.current.filter, false, true)}

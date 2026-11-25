@@ -3,10 +3,11 @@ import { memo, useCallback } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import type { InputProps } from '@/components/common/Input'
 import Input from '@/components/common/Input'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
 
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ccdcdbdb'
 
 export interface TextAreaItemProps extends InputProps {
   value: string
@@ -16,7 +17,6 @@ export interface TextAreaItemProps extends InputProps {
 }
 
 export default memo(({ value, label, onOnlineMatch, onChanged, style, ...props }: TextAreaItemProps) => {
-  const theme = useTheme()
   const handleRemove = useCallback(() => {
     onChanged?.('')
   }, [onChanged])
@@ -24,15 +24,15 @@ export default memo(({ value, label, onOnlineMatch, onChanged, style, ...props }
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.label} size={14}>{label}</Text>
+        <Text style={styles.label} size={13} color={HAMMER_TEXT}>{label}</Text>
         {
           onChanged ? (
             <View style={styles.btns}>
-              <TouchableOpacity onPress={handleRemove}>
-                <Text size={13} color={theme['c-button-font']}>{global.i18n.t('metadata_edit_modal_form_remove_lyric')}</Text>
+              <TouchableOpacity onPress={handleRemove} activeOpacity={0.6}>
+                <Text size={13} color={HAMMER_TEXT}>{global.i18n.t('metadata_edit_modal_form_remove_lyric')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={onOnlineMatch}>
-                <Text size={13} color={theme['c-button-font']}>{global.i18n.t('metadata_edit_modal_form_match_lyric')}</Text>
+              <TouchableOpacity onPress={onOnlineMatch} activeOpacity={0.6}>
+                <Text size={13} color={'#E64040'}>{global.i18n.t('metadata_edit_modal_form_match_lyric')}</Text>
               </TouchableOpacity>
             </View>
           ) : null
@@ -44,7 +44,7 @@ export default memo(({ value, label, onOnlineMatch, onChanged, style, ...props }
         scrollEnabled={false}
         textAlignVertical='top'
         multiline
-        style={StyleSheet.compose({ ...styles.textarea, backgroundColor: theme['c-primary-input-background'] }, style)}
+        style={StyleSheet.compose({ ...styles.textarea, backgroundColor: '#ffffff' }, style)}
         {...props}
        />
     </View>
@@ -53,17 +53,17 @@ export default memo(({ value, label, onOnlineMatch, onChanged, style, ...props }
 
 const styles = createStyle({
   container: {
-    // paddingLeft: 25,
-    marginBottom: 15,
+    marginBottom: 12,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 30,
+    marginBottom: 4,
   },
   label: {
-    marginBottom: 2,
+    fontWeight: 'bold',
   },
   btns: {
     flexDirection: 'row',
@@ -72,10 +72,11 @@ const styles = createStyle({
   textarea: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingTop: 3,
-    paddingBottom: 3,
+    paddingTop: 6,
+    paddingBottom: 6,
     height: 'auto',
-    // height: 300,
-    // maxWidth: 300,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
   },
 })

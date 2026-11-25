@@ -1,4 +1,5 @@
 import Content from './Content'
+import TabBar from './TabBar'
 import PlayerBar from '@/components/player/PlayerBar'
 
 export default () => {
@@ -6,6 +7,7 @@ export default () => {
     <>
       <Content />
       <PlayerBar isHome />
+      <TabBar />
     </>
   )
 }

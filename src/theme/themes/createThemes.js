@@ -295,6 +295,43 @@ const defaultThemes = [
       'c-badge-tertiary': 'var(c-primary-light-100)',
     },
   },
+  // 锤子（Smartisan）皮肤：主色 #E60012，中性灰阶
+  {
+    id: 'hammer_light',
+    name: '天生骄傲',
+    isDark: false,
+    config: {
+      primary: 'rgb(230, 0, 18)',
+      font: 'rgb(34, 34, 34)',
+      'c-app-background': 'rgba(242, 242, 242, 1)',
+      'c-main-background': 'rgba(255, 255, 255, 1)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+
+      'c-badge-primary': 'var(c-primary)',
+      'c-badge-secondary': 'rgba(153, 153, 153, 1)',
+      'c-badge-tertiary': 'rgba(255, 138, 0, 1)',
+    },
+  },
+  {
+    id: 'hammer_dark',
+    name: '子夜锤子',
+    isDark: true,
+    config: {
+      primary: 'rgb(230, 0, 18)',
+      font: 'rgb(255, 255, 255)',
+      'c-app-background': 'rgba(0, 0, 0, 0)',
+      'c-main-background': 'rgba(21, 21, 21, 1)',
+      'bg-image': '',
+      'bg-image-position': 'center',
+      'bg-image-size': 'cover',
+
+      'c-badge-primary': 'var(c-primary)',
+      'c-badge-secondary': 'rgba(153, 153, 153, 1)',
+      'c-badge-tertiary': 'rgba(255, 138, 0, 1)',
+    },
+  },
 ]
 
 const themes = defaultThemes.map(({ config: { primary, font, ...extInfo }, ...themeInfo }) => {

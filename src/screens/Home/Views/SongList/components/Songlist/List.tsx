@@ -5,11 +5,11 @@ import ListItem from './ListItem'
 // import { navigations } from '@/navigation'
 import { type ListInfoItem } from '@/store/songlist/state'
 import { useLayout } from '@/utils/hooks'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { scaleSizeW } from '@/utils/pixelRatio'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
+import EmptyView from '@/components/common/EmptyView'
 
 type FlatListType = FlatListProps<ListInfoItem>
 
@@ -35,7 +35,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   const [showSource, setShowSource] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const { onLayout, width } = useLayout()
-  const theme = useTheme()
+  const t = useI18n()
   // console.log('render songlist')
 
   useImperativeHandle(ref, () => ({
@@ -69,11 +69,11 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   // }
   const refreshControl = useMemo(() => (
     <RefreshControl
-      colors={[theme['c-primary']]}
-      // progressBackgroundColor={theme.primary}
+      colors={['#E64040']}
+      // progressBackgroundColor={'#E64040'}
       refreshing={status == 'refreshing'}
       onRefresh={onRefresh} />
-  ), [status, onRefresh, theme])
+  ), [status, onRefresh])
   const footerComponent = useMemo(() => {
     let label: FooterLabel
     switch (status) {
@@ -170,6 +170,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
                 onEndReached={handleLoadMore}
                 refreshControl={refreshControl}
                 ListFooterComponent={footerComponent}
+                ListEmptyComponent={status == 'end' ? <EmptyView text={t('no_item')} icon={null} /> : null}
               />
             )
       }
@@ -182,7 +183,6 @@ const Footer = ({ label, onLoadMore }: {
   label: FooterLabel
   onLoadMore: () => void
 }) => {
-  const theme = useTheme()
   const t = useI18n()
   const handlePress = () => {
     if (label != 'list_error') return
@@ -192,7 +192,7 @@ const Footer = ({ label, onLoadMore }: {
     label
       ? (
           <View>
-            <Text onPress={handlePress} style={styles.footer} color={theme['c-font-label']}>{t(label)}</Text>
+            <Text onPress={handlePress} style={styles.footer} color={'#939396'}>{t(label)}</Text>
           </View>
         )
       : null

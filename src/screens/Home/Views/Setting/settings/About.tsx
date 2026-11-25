@@ -6,7 +6,6 @@ import Section from '../components/Section'
 
 import { createStyle, openUrl } from '@/utils/tools'
 // import { showPactModal } from '@/navigation'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import Text from '@/components/common/Text'
 import { showPactModal } from '@/core/common'
@@ -17,7 +16,6 @@ import { showPactModal } from '@/core/common'
 // const qqGroupWebUrl2 = 'https://qm.qq.com/cgi-bin/qm/qr?k=HPNJEfrZpBZ9T8szYWbe2d5JrAAeOt_l&jump_from=webapi'
 
 export default memo(() => {
-  const theme = useTheme()
   const t = useI18n()
   const openHomePage = () => {
     void openUrl('https://github.com/lyswhut/lx-music-mobile#readme')
@@ -55,13 +53,23 @@ export default memo(() => {
   const textLinkStyle = {
     ...styles.text,
     textDecorationLine: 'underline',
-    color: theme['c-primary-font'],
+    color: '#E64040',
     // fontSize: 14,
   } as const
 
 
   return (
     <Section title={t('setting_about')}>
+      <View style={styles.profile}>
+        <View style={styles.avatarWrap}>
+          <Text size={26} color="#E64040" style={styles.avatarText}>LX</Text>
+        </View>
+        <Text style={styles.profileName} size={15} color="#222">落雪无痕</Text>
+        <TouchableOpacity onPress={openHomePage}>
+          <Text style={styles.profileLink} size={13}>https://github.com/lyswhut/lx-music-mobile</Text>
+        </TouchableOpacity>
+        <Text style={styles.slogan} size={12}>O ever youthful, O ever weeping.</Text>
+      </View>
       <View style={styles.part}>
         <Text style={styles.text} >本软件完全免费，代码已开源。开源地址：</Text>
         <TouchableOpacity onPress={openHomePage}>
@@ -105,7 +113,7 @@ export default memo(() => {
       </View>
       <View style={styles.part}>
         <Text style={styles.text}>你已签署本软件的</Text>
-        <TouchableOpacity onPress={openPactModal}><Text style={styles.text} color={theme['c-primary-font']}>许可协议</Text></TouchableOpacity>
+        <TouchableOpacity onPress={openPactModal}><Text style={styles.text} color={'#E64040'}>许可协议</Text></TouchableOpacity>
         <Text style={styles.text}>，协议的在线版本在</Text>
         <TouchableOpacity onPress={openPartPage}><Text style={textLinkStyle}>这里</Text></TouchableOpacity>
         <Text style={styles.text}>。</Text>
@@ -119,20 +127,56 @@ export default memo(() => {
 })
 
 const styles = createStyle({
+  profile: {
+    paddingLeft: 14,
+    paddingRight: 14,
+    paddingTop: 16,
+    paddingBottom: 14,
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  avatarWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontWeight: 'bold',
+  },
+  profileName: {
+    marginTop: 10,
+    fontWeight: 'bold',
+  },
+  profileLink: {
+    marginTop: 4,
+    color: '#E64040',
+    textDecorationLine: 'underline',
+  },
+  slogan: {
+    marginTop: 6,
+    color: '#4CAF50',
+  },
   part: {
-    marginLeft: 15,
-    marginRight: 15,
-    marginBottom: 10,
+    paddingLeft: 14,
+    paddingRight: 14,
+    marginBottom: 12,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   text: {
-    fontSize: 14,
+    fontSize: 13,
+    lineHeight: 21,
+    color: '#4d4d4d',
     textAlignVertical: 'bottom',
   },
   boldText: {
-    fontSize: 14,
+    fontSize: 13,
+    lineHeight: 21,
     fontWeight: 'bold',
+    color: '#4d4d4d',
     textAlignVertical: 'bottom',
   },
   throughText: {

@@ -1,29 +1,28 @@
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, Image as RNImage } from 'react-native'
 import { navigations } from '@/navigation'
 import { usePlayerMusicInfo } from '@/store/player/hook'
-import { scaleSizeH } from '@/utils/pixelRatio'
 import commonState from '@/store/common/state'
 import playerState from '@/store/player/state'
 import { LIST_IDS, NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import Image from '@/components/common/Image'
 import { useCallback } from 'react'
 import { setLoadErrorPicUrl, setMusicInfo } from '@/core/player/playInfo'
+import { SmartisanImages } from '@/resources/smartisan'
 
-const PIC_HEIGHT = scaleSizeH(46)
+// 锤子迷你条封面：50dp 正圆（music_tabbar_smartisan.xml 里是 CircleImageView 50dp）
+const PIC_SIZE = 50
 
 const styles = StyleSheet.create({
   image: {
-    width: PIC_HEIGHT,
-    height: PIC_HEIGHT,
-    borderRadius: 2,
+    width: PIC_SIZE,
+    height: PIC_SIZE,
+    borderRadius: PIC_SIZE / 2,
   },
 })
 
 export default ({ isHome }: { isHome: boolean }) => {
   const musicInfo = usePlayerMusicInfo()
   const handlePress = () => {
-    // console.log('')
-    // console.log(playMusicInfo)
     if (!musicInfo.id) return
     navigations.pushPlayDetailScreen(commonState.componentIds.home!)
 
@@ -46,14 +45,9 @@ export default ({ isHome }: { isHome: boolean }) => {
 
   return (
     <TouchableOpacity onLongPress={handleLongPress} onPress={handlePress} activeOpacity={0.7} >
-      <Image url={musicInfo.pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={styles.image} onError={handleError} />
+      {musicInfo.pic
+        ? <Image url={musicInfo.pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={styles.image} onError={handleError} />
+        : <RNImage source={SmartisanImages.noCover} style={styles.image} resizeMode="cover" />}
     </TouchableOpacity>
   )
 }
-
-
-// const styles = StyleSheet.create({
-//   playInfoImg: {
-
-//   },
-// })

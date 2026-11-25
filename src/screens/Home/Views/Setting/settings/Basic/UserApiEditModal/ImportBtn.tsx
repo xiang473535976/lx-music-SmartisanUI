@@ -8,7 +8,6 @@ import ScriptImportOnline, { type ScriptImportOnlineType } from './ScriptImportO
 import { state } from '@/store/userApi'
 import { tipDialog } from '@/utils/tools'
 
-import { useTheme } from '@/store/theme/hook'
 
 interface BtnProps {
   btnStyle?: _DorpDownMenuProps<any[]>['btnStyle']
@@ -17,7 +16,6 @@ interface BtnProps {
 
 export default ({ btnStyle }: BtnProps) => {
   const t = useI18n()
-  const theme = useTheme()
   const scriptImportExportRef = useRef<ScriptImportExportType>(null)
   const scriptImportOnlineRef = useRef<ScriptImportOnlineType>(null)
 
@@ -54,7 +52,7 @@ export default ({ btnStyle }: BtnProps) => {
       center
       onPress={handleAction}
     >
-      <Text size={14} color={theme['c-button-font']}>{t('user_api_btn_import')}</Text>
+      <Text size={14} color={'#4d4d4d'} style={{ fontWeight: 'bold' }}>{t('user_api_btn_import')}</Text>
       <ScriptImportExport ref={scriptImportExportRef} />
       <ScriptImportOnline ref={scriptImportOnlineRef} />
     </DorpDownMenu>

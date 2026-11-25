@@ -5,7 +5,6 @@ import InputItem from './InputItem'
 import { useI18n } from '@/lang'
 import TextAreaItem from './TextAreaItem'
 import PicItem from './PicItem'
-import { useTheme } from '@/store/theme/hook'
 import ParseName from './ParseName'
 import { downloadFile, mkdir, stat } from '@/utils/fs'
 import { useUnmounted } from '@/utils/hooks'
@@ -42,7 +41,6 @@ export default forwardRef<MetadataFormType, {}>((props, ref) => {
   const [fileName, setFileName] = useState('')
   const filePath = useRef('')
   const [data, setData] = useState({ ...defaultData })
-  const theme = useTheme()
   const isUnmounted = useUnmounted()
 
   useImperativeHandle(ref, () => ({
@@ -181,7 +179,7 @@ export default forwardRef<MetadataFormType, {}>((props, ref) => {
         label={global.i18n.t('metadata_edit_modal_file_name')}
         numberOfLines={2}
         scrollEnabled
-        style={{ ...styles.pathText, color: theme['c-primary-font'] }}
+        style={{ ...styles.pathText, color: '#E64040' }}
       />
 
       <InputItem

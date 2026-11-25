@@ -5,7 +5,6 @@ import Text from '@/components/common/Text'
 import ConfirmAlert, { type ConfirmAlertType } from '@/components/common/ConfirmAlert'
 import { createStyle, toast } from '@/utils/tools'
 import { mkdir } from '@/utils/fs'
-import { useTheme } from '@/store/theme/hook'
 import type { PathItem } from './ListItem'
 const filterFileName = /[\\/:*?#"<>|]/
 
@@ -16,7 +15,6 @@ interface NameInputType {
   focus: () => void
 }
 const NameInput = forwardRef<NameInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const [text, setText] = useState('')
   const inputRef = useRef<InputType>(null)
 
@@ -38,7 +36,7 @@ const NameInput = forwardRef<NameInputType, {}>((props, ref) => {
       placeholder={global.i18n.t('create_new_folder_tip')}
       value={text}
       onChangeText={setText}
-      style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+      style={{ ...styles.input, backgroundColor: '#ffffff' }}
     />
   )
 })
@@ -106,15 +104,18 @@ const styles = createStyle({
     flexDirection: 'column',
   },
   newFolderTitle: {
-    marginBottom: 5,
+    marginBottom: 10,
+    fontWeight: 'bold',
   },
   input: {
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 240,
+    height: 34,
+    paddingLeft: 8,
     borderRadius: 4,
-    paddingTop: 2,
-    paddingBottom: 2,
+    borderWidth: 0.5,
+    borderColor: '#ccdcdbdb',
   },
 })
 

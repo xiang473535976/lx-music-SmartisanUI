@@ -1,17 +1,16 @@
 import { View } from 'react-native'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
-import { BorderWidths } from '@/theme'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
+
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ccdcdbdb'
 
 export default ({ listInfo, onPress, width }: {
   listInfo: LX.List.MyListInfo
   onPress: (listInfo: LX.List.MyListInfo) => void
   width: number
 }) => {
-  const theme = useTheme()
-
   const handlePress = () => {
     onPress(listInfo)
   }
@@ -19,10 +18,10 @@ export default ({ listInfo, onPress, width }: {
   return (
     <View style={{ ...styles.listItem, width }}>
       <Button
-        style={{ ...styles.button, backgroundColor: theme['c-button-background'], borderColor: theme['c-primary-light-200-alpha-700'] }}
+        style={styles.button}
         onPress={handlePress}
       >
-        <Text numberOfLines={1} size={14} color={theme['c-button-font']}>{listInfo.name}</Text>
+        <Text numberOfLines={1} size={14} color={HAMMER_TEXT}>{listInfo.name}</Text>
       </Button>
     </View>
   )
@@ -30,11 +29,10 @@ export default ({ listInfo, onPress, width }: {
 
 export const styles = createStyle({
   listItem: {
-    // width: '50%',
     paddingRight: 13,
   },
   button: {
-    height: 36,
+    height: 34,
     paddingLeft: 10,
     paddingRight: 10,
     marginRight: 10,
@@ -43,6 +41,8 @@ export const styles = createStyle({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: BorderWidths.normal1,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
+    backgroundColor: '#ffffff',
   },
 })

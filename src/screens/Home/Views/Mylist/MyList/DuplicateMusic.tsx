@@ -4,37 +4,39 @@ import { createStyle } from '@/utils/tools'
 import Dialog, { type DialogType } from '@/components/common/Dialog'
 import { FlatList, TouchableOpacity, View, type FlatListProps as _FlatListProps } from 'react-native'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { useTheme } from '@/store/theme/hook'
 import { type DuplicateMusicItem, filterDuplicateMusic } from './utils'
 import { getListMusics, removeListMusics } from '@/core/list'
 import { Icon } from '@/components/common/Icon'
 import { useUnmounted } from '@/utils/hooks'
 import { playList } from '@/core/player/player'
 import { useI18n } from '@/lang'
+import EmptyView from '@/components/common/EmptyView'
 import { handleRemove } from '../MusicList/listAction'
 import Button from '@/components/common/Button'
 
 type FlatListProps = _FlatListProps<DuplicateMusicItem>
 const ITEM_HEIGHT = scaleSizeH(56)
 
+const HAMMER_RED = '#E64040'
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_SUB = '#939396'
+const HAMMER_LINE = '#ededed'
+
 const Title = ({ title }: {
   title: string
 }) => {
   return (
-    <Text style={styles.title} size={16}>
+    <Text style={styles.title} size={16} color="#333333">
       {title}
     </Text>
   )
 }
 
 const Empty = () => {
-  const theme = useTheme()
   const t = useI18n()
 
   return (
-    <View style={styles.noitem}>
-      <Text color={theme['c-font-label']}>{t('no_item')}</Text>
-    </View>
+    <EmptyView text={t('no_item')} icon={null} paddingTop={35} />
   )
 }
 
@@ -46,37 +48,33 @@ const ListItem = memo(({ info, index, onRemove, onPlay, selectedList, onPress }:
   onRemove: (idx: number) => void
   onPress: (info: DuplicateMusicItem) => void
 }) => {
-  const theme = useTheme()
   const isSelected = selectedList.includes(info)
 
   return (
-    <View style={{ ...styles.listItem, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)' }} onStartShouldSetResponder={() => true}>
-      {/* <View style={styles.listItemLabel}>
-        <Text style={styles.sn} size={13} color={theme['c-300']}>{info.index + 1}</Text>
-      </View> */}
+    <View style={{ ...styles.listItem, height: ITEM_HEIGHT, backgroundColor: isSelected ? '#f2f2f2' : 'rgba(0,0,0,0)' }} onStartShouldSetResponder={() => true}>
       <TouchableOpacity style={styles.listItemInfo} onPress={() => { onPress(info) }}>
-        <Text color={theme['c-font']} size={14} numberOfLines={1}>{info.musicInfo.name}</Text>
+        <Text color={HAMMER_TEXT} size={15} numberOfLines={1}>{info.musicInfo.name}</Text>
         <View style={styles.listItemAlbum}>
-          <Text color={theme['c-font']} size={12} numberOfLines={1}>
+          <Text color={HAMMER_SUB} size={12} numberOfLines={1}>
             {info.musicInfo.singer}
             {
               info.musicInfo.meta.albumName ? (
-                <Text color={theme['c-font-label']} size={12} numberOfLines={1}> ({info.musicInfo.meta.albumName})</Text>
+                <Text color={HAMMER_SUB} size={12} numberOfLines={1}> ({info.musicInfo.meta.albumName})</Text>
               ) : null
             }
           </Text>
         </View>
       </TouchableOpacity>
       <View style={styles.listItemLabel}>
-        <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{ info.musicInfo.source }</Text>
-        <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{info.musicInfo.interval}</Text>
+        <Text style={styles.listItemLabelText} size={12} color={HAMMER_SUB}>{ info.musicInfo.source }</Text>
+        <Text style={styles.listItemLabelText} size={12} color={HAMMER_SUB}>{info.musicInfo.interval}</Text>
       </View>
       <View style={styles.listItemBtns}>
         <Button style={styles.listItemBtn} onPress={() => { onPlay(info) }}>
-          <Icon name="play-outline" style={{ color: theme['c-button-font'] }} size={18} />
+          <Icon name="play-outline" style={{ color: HAMMER_RED }} size={18} />
         </Button>
         <Button style={styles.listItemBtn} onPress={() => { onRemove(index) }}>
-          <Icon name="remove" style={{ color: theme['c-button-font'] }} size={18} />
+          <Icon name="remove" style={{ color: HAMMER_SUB }} size={18} />
         </Button>
       </View>
     </View>
@@ -284,6 +282,8 @@ const styles = createStyle({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: HAMMER_LINE,
   },
   // sn: {
   //   width: 38,

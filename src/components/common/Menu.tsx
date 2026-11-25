@@ -5,12 +5,14 @@ import { useWindowSize } from '@/utils/hooks'
 import Modal, { type ModalType } from './Modal'
 
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 
 const menuItemHeight = scaleSizeH(40)
 const menuItemWidth = scaleSizeW(100)
+
+// 锤子风配色
+const HAMMER_RED = '#E64040'
 
 export interface Position { w: number, h: number, x: number, y: number, menuWidth?: number, menuHeight?: number }
 export interface MenuSize { width?: number, height?: number }
@@ -28,20 +30,18 @@ const styles = createStyle({
   },
   menu: {
     position: 'absolute',
-    // borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'lightgray',
-    borderRadius: 2,
-    backgroundColor: 'white',
-    elevation: 3,
+    borderWidth: 0.5,
+    borderColor: '#ededed',
+    borderRadius: 4,
+    backgroundColor: '#ffffff',
+    elevation: 6,
   },
   menuItem: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    // height: menuItemHeight,
-    // width: menuItemWidth,
-    // alignItems: 'center',
+    paddingLeft: 14,
+    paddingRight: 14,
     justifyContent: 'center',
-    // backgroundColor: '#ccc',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#f2f2f2',
   },
   // menuText: {
   //   // textAlign: 'center',
@@ -74,7 +74,6 @@ const Menu = ({
   fontSize = 15,
   center = false,
 }: Props) => {
-  const theme = useTheme()
   const windowSize = useWindowSize()
   // const fadeAnim = useRef(new Animated.Value(0)).current
   // console.log(buttonPosition)
@@ -127,7 +126,7 @@ const Menu = ({
   // console.log(menuStyle)
   // console.log(menuItemStyle)
   return (
-    <View style={{ ...styles.menu, ...menuStyle, backgroundColor: theme['c-content-background'] }} onStartShouldSetResponder={() => true}>
+    <View style={{ ...styles.menu, ...menuStyle }} onStartShouldSetResponder={() => true}>
       <Animated.ScrollView keyboardShouldPersistTaps={'always'}>
         {
           menus.map((menu, index) => (
@@ -137,7 +136,7 @@ const Menu = ({
                     key={menu.action}
                     style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height, opacity: 0.4 }}
                   >
-                    <Text style={{ textAlign: center ? 'center' : 'left' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                    <Text style={{ textAlign: center ? 'center' : 'left' }} size={fontSize} color="#b0b0b0" numberOfLines={1}>{menu.label}</Text>
                   </View>
                 )
               : menu.action == activeId
@@ -146,17 +145,17 @@ const Menu = ({
                       key={menu.action}
                       style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height }}
                     >
-                      <Text style={{ textAlign: center ? 'center' : 'left' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                      <Text style={{ textAlign: center ? 'center' : 'left' }} color={HAMMER_RED} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                     </View>
                   )
                 : (
                     <TouchableHighlight
                       key={menu.action}
                       style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height }}
-                      underlayColor={theme['c-primary-background-active']}
+                      underlayColor="#f2f2f2"
                       onPress={() => { menuPress(menu) }}
                     >
-                      <Text style={{ textAlign: center ? 'center' : 'left' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                      <Text style={{ textAlign: center ? 'center' : 'left' }} size={fontSize} color="#4d4d4d" numberOfLines={1}>{menu.label}</Text>
                     </TouchableHighlight>
                   )
 

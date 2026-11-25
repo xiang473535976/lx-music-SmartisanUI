@@ -4,7 +4,6 @@ import Text from '@/components/common/Text'
 import { View } from 'react-native'
 import Input, { type InputType } from '@/components/common/Input'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 // import SourceSelector, { type SourceSelectorProps, type SourceSelectorType } from '../SourceSelector'
 import { type Source } from '@/store/songlist/state'
@@ -15,7 +14,6 @@ interface IdInputType {
   focus: () => void
 }
 const IdInput = forwardRef<IdInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const t = useI18n()
   const [text, setText] = useState('')
   const inputRef = useRef<InputType>(null)
@@ -38,7 +36,7 @@ const IdInput = forwardRef<IdInputType, {}>((props, ref) => {
       placeholder={t('songlist_open_input_placeholder')}
       value={text}
       onChangeText={setText}
-      style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+      style={{ ...styles.input, backgroundColor: '#ffffff' }}
     />
   )
 })
@@ -57,7 +55,6 @@ export default forwardRef<ModalType, ModalProps>(({ onOpenId }, ref) => {
   // const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const inputRef = useRef<IdInputType>(null)
   const [visible, setVisible] = useState(false)
-  const theme = useTheme()
   const t = useI18n()
 
   const handleShow = (source: Source) => {
@@ -98,10 +95,10 @@ export default forwardRef<ModalType, ModalProps>(({ onOpenId }, ref) => {
         >
           <View style={styles.content}>
             <View style={styles.col}>
-              {/* <SourceSelector style={{ ...styles.selector, backgroundColor: theme['c-primary-input-background'] }} ref={sourceSelectorRef} onSourceChange={onSourceChange} /> */}
+              {/* <SourceSelector style={{ ...styles.selector, backgroundColor: '#ffffff' }} ref={sourceSelectorRef} onSourceChange={onSourceChange} /> */}
               <IdInput ref={inputRef} />
             </View>
-            <Text style={styles.inputTipText} size={13} color={theme['c-600']}>{t('songlist_open_input_tip')}</Text>
+            <Text style={styles.inputTipText} size={13} color={'#939396'}>{t('songlist_open_input_tip')}</Text>
           </View>
         </ConfirmAlert>
       : null
@@ -127,16 +124,14 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 290,
-    // borderRadius: 4,
-    // borderTopRightRadius: 4,
-    // borderBottomRightRadius: 4,
-    // paddingTop: 2,
-    // paddingBottom: 2,
     height: '100%',
+    paddingLeft: 8,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#ccdcdbdb',
   },
   inputTipText: {
-    marginTop: 15,
-    // lineHeight: 18,
+    marginTop: 12,
   },
 })
 

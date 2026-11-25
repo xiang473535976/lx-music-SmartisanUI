@@ -72,6 +72,10 @@ export class StateEvent extends Event {
     this.emit('playPlayedListChanged', playedList)
   }
 
+  playHistoryChanged(playHistory: PlayerState['playHistory']) {
+    this.emit('playHistoryChanged', playHistory)
+  }
+
   playTempPlayListChanged(tempPlayList: PlayerState['tempPlayList']) {
     this.emit('playTempPlayListChanged', tempPlayList)
   }

@@ -1,6 +1,7 @@
 import { useRef, useImperativeHandle, forwardRef, useState, useEffect } from 'react'
 import SearchTipList, { type SearchTipListProps as _SearchTipListProps, type SearchTipListType as _SearchTipListType } from '@/components/SearchTipList'
 import Button from '@/components/common/Button'
+import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
@@ -99,7 +100,8 @@ export default forwardRef<TipListType, TipListProps>(({ onSearch }, ref) => {
   const renderItem: SearchTipListProps['renderItem'] = ({ item, index }) => {
     return (
       <Button style={styles.item} onPress={() => { onSearch(item) }} key={index}>
-        <Text numberOfLines={1}>{item}</Text>
+        <Icon name="search-2" size={15} color="#b0b0b0" style={styles.itemIcon} />
+        <Text numberOfLines={1} size={15} color="#4d4d4d" style={styles.itemText}>{item}</Text>
       </Button>
     )
   }
@@ -127,9 +129,18 @@ const styles = createStyle({
     height: ITEM_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 15,
-    paddingRight: 15,
-    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    paddingLeft: 14,
+    paddingRight: 14,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
+  },
+  itemIcon: {
+    marginRight: 10,
+  },
+  itemText: {
+    flexGrow: 1,
+    flexShrink: 1,
   },
 })
 

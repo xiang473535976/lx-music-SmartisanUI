@@ -5,7 +5,6 @@ import Text from '@/components/common/Text'
 import ConfirmAlert, { type ConfirmAlertType } from '@/components/common/ConfirmAlert'
 import { createStyle, toast } from '@/utils/tools'
 import { getManagedFolders, stat, removeManagedFolder, selectManagedFolder } from '@/utils/fs'
-import { useTheme } from '@/store/theme/hook'
 import { getOpenStoragePath, saveOpenStoragePath } from '@/utils/data'
 import Button from '@/components/common/Button'
 import ButtonPrimary from '@/components/common/ButtonPrimary'
@@ -21,7 +20,6 @@ interface PathInputType {
   focus: () => void
 }
 const PathInput = forwardRef<PathInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const [text, setText] = useState('')
   const inputRef = useRef<InputType>(null)
 
@@ -46,7 +44,7 @@ const PathInput = forwardRef<PathInputType, {}>((props, ref) => {
       multiline
       numberOfLines={3}
       textAlignVertical='top'
-      style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+      style={{ ...styles.input, backgroundColor: '#ffffff' }}
     />
   )
 })
@@ -62,7 +60,6 @@ export default forwardRef<OpenDirModalType, { onOpenDir: (dir: string) => Promis
   const [paths, setPaths] = useState<string[]>([])
   const [contentPaths, setContentPaths] = useState<string[]>([])
   const isUnmounted = useUnmounted()
-  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     show(paths) {
@@ -152,7 +149,7 @@ export default forwardRef<OpenDirModalType, { onOpenDir: (dir: string) => Promis
                     <Text size={12}>{path}</Text>
                   </Button>
                   <Button style={styles.removeBtn} onPress={() => { removeSelectStoragePath(path) }}>
-                    <Icon color={theme['c-font-label']} name="close" size={12} />
+                    <Icon color={'#939396'} name="close" size={12} />
                   </Button>
                 </View>
               )
@@ -163,7 +160,7 @@ export default forwardRef<OpenDirModalType, { onOpenDir: (dir: string) => Promis
           <Text style={styles.tip} size={12}>
             {global.i18n.t('open_storage_select_path_tip')}
           </Text>
-          <ButtonPrimary style={styles.btn} size={12} onPress={handleSelectStorage}>{global.i18n.t('open_storage_select_path')}</ButtonPrimary>
+          <ButtonPrimary size={13} onPress={handleSelectStorage}>{global.i18n.t('open_storage_select_path')}</ButtonPrimary>
         </View>
       </View>
     </ConfirmAlert>
@@ -177,17 +174,21 @@ const styles = createStyle({
     flexDirection: 'column',
   },
   newFolderTitle: {
-    marginBottom: 5,
+    marginBottom: 10,
     width: 300,
     maxWidth: '100%',
+    fontWeight: 'bold',
   },
   input: {
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 240,
     borderRadius: 4,
-    paddingTop: 3,
-    paddingBottom: 3,
+    borderWidth: 0.5,
+    borderColor: '#ccdcdbdb',
+    paddingLeft: 8,
+    paddingTop: 6,
+    paddingBottom: 6,
     height: 'auto',
   },
   list: {
@@ -196,8 +197,10 @@ const styles = createStyle({
     marginVertical: 10,
   },
   listContentItem: {
-    paddingVertical: 10,
     flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
   },
   pathBtn: {
     paddingHorizontal: 5,

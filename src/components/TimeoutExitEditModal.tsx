@@ -4,15 +4,15 @@ import Text from '@/components/common/Text'
 import { View } from 'react-native'
 import Input, { type InputType } from '@/components/common/Input'
 import { createStyle, toast } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { cancelTimeoutExit, getTimeoutExitTime, onTimeUpdate, startTimeoutExit, stopTimeoutExit, useTimeoutExitTimeInfo } from '@/core/player/timeoutExit'
 import { useI18n } from '@/lang'
-import CheckBox from './common/CheckBox'
+import CheckRow from './common/CheckRow'
 import { useSettingValue } from '@/store/setting/hook'
 import { updateSetting } from '@/core/common'
 import settingState from '@/store/setting/state'
 
 const MAX_MIN = 1440
+const HAMMER_SUB = '#939396'
 const rxp = /([1-9]\d*)/
 const formatTime = (time: number) => {
   // let d = parseInt(time / 86400)
@@ -26,7 +26,6 @@ const formatTime = (time: number) => {
   return `${hStr}${m}:${s}`
 }
 const Status = () => {
-  const theme = useTheme()
   const t = useI18n()
   const exitTimeInfo = useTimeoutExitTimeInfo()
   return (
@@ -40,7 +39,7 @@ const Status = () => {
             <Text>{t('timeout_exit_tip_on', { time: formatTime(exitTimeInfo.time) })}</Text>
           )
       }
-      {exitTimeInfo.isPlayedStop ? <Text color={theme['c-font-label']} size={13}>{t('timeout_exit_btn_wait_tip')}</Text> : null}
+      {exitTimeInfo.isPlayedStop ? <Text color={HAMMER_SUB} size={13}>{t('timeout_exit_btn_wait_tip')}</Text> : null}
     </View>
   )
 }
@@ -52,7 +51,6 @@ interface TimeInputType {
   focus: () => void
 }
 const TimeInput = forwardRef<TimeInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const [text, setText] = useState('')
   const inputRef = useRef<InputType>(null)
   const t = useI18n()
@@ -75,7 +73,7 @@ const TimeInput = forwardRef<TimeInputType, {}>((props, ref) => {
       placeholder={t('timeout_exit_input_tip')}
       value={text}
       onChangeText={setText}
-      style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+      style={styles.input}
     />
   )
 })
@@ -90,7 +88,7 @@ const Setting = () => {
 
   return (
     <View style={styles.checkbox}>
-      <CheckBox check={timeoutExitPlayed} label={t('timeout_exit_label_isPlayed')} onChange={onCheckChange} />
+      <CheckRow check={timeoutExitPlayed} label={t('timeout_exit_label_isPlayed')} onChange={onCheckChange} />
     </View>
   )
 }
@@ -246,9 +244,10 @@ const styles = createStyle({
   input: {
     flexGrow: 1,
     flexShrink: 1,
-    // borderRadius: 4,
-    // paddingTop: 2,
-    // paddingBottom: 2,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#ccdcdbdb',
+    backgroundColor: '#ffffff',
   },
   inputLabel: {
     marginLeft: 8,

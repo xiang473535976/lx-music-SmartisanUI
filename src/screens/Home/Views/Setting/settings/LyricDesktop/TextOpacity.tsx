@@ -5,7 +5,6 @@ import SubTitle from '../../components/SubTitle'
 import Slider, { type SliderProps } from '../../components/Slider'
 import { useI18n } from '@/lang'
 import { useSettingValue } from '@/store/setting/hook'
-import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { setDesktopLyricAlpha } from '@/core/desktopLyric'
@@ -15,7 +14,6 @@ import { updateSetting } from '@/core/common'
 export default memo(() => {
   const t = useI18n()
   const opacity = useSettingValue('desktopLyric.style.opacity')
-  const theme = useTheme()
   const [sliderSize, setSliderSize] = useState(opacity)
   const [isSliding, setSliding] = useState(false)
   const handleSlidingStart = useCallback<NonNullable<SliderProps['onSlidingStart']>>(() => {
@@ -36,7 +34,7 @@ export default memo(() => {
   return (
     <SubTitle title={t('setting_lyric_desktop_text_opacity')}>
       <View style={styles.content}>
-        <Text style={{ color: theme['c-primary-font'] }}>{isSliding ? sliderSize : opacity}</Text>
+        <Text style={styles.value} size={15}>{isSliding ? sliderSize : opacity}</Text>
         <Slider
           minimumValue={10}
           maximumValue={100}
@@ -56,8 +54,15 @@ const styles = createStyle({
     flexGrow: 0,
     flexShrink: 1,
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     alignItems: 'center',
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+  value: {
+    width: 54,
+    color: '#E64040',
+    fontWeight: 'bold',
   },
 })
 

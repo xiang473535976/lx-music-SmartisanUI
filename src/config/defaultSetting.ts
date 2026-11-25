@@ -37,7 +37,7 @@ const defaultSetting: LX.AppSetting = {
 
   // 'playDetail.isZoomActiveLrc': false,
   // 'playDetail.isShowLyricProgressSetting': false,
-  'playDetail.style.align': 'left',
+  'playDetail.style.align': 'center',
   'playDetail.vertical.style.lrcFontSize': 210,
   'playDetail.horizontal.style.lrcFontSize': 220,
   'playDetail.isShowLyricProgressSetting': false,
@@ -73,19 +73,19 @@ const defaultSetting: LX.AppSetting = {
   'sync.enable': false,
 
   // 'theme.id': 'blue_plus',
-  'theme.id': 'green',
-  'theme.lightId': 'green',
-  'theme.darkId': 'black',
+  'theme.id': 'hammer_light',
+  'theme.lightId': 'hammer_light',
+  'theme.darkId': 'hammer_dark',
   'theme.hideBgDark': false,
   'theme.dynamicBg': false,
   'theme.fontShadow': false,
 }
 
 
-// 使用新年皮肤
-if (new Date().getMonth() < 2) {
-  defaultSetting['theme.id'] = 'happy_new_year'
-  defaultSetting['desktopLyric.style.lyricPlayedColor'] = 'rgba(255, 18, 34, 1)'
-}
+// 使用新年皮肤（锤子皮肤分支已停用，保持外观一致）
+// if (new Date().getMonth() < 2) {
+//   defaultSetting['theme.id'] = 'happy_new_year'
+//   defaultSetting['desktopLyric.style.lyricPlayedColor'] = 'rgba(255, 18, 34, 1)'
+// }
 
 export default defaultSetting

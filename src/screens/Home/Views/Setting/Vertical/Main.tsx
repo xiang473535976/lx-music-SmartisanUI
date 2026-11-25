@@ -6,11 +6,7 @@ import Player from '../settings/Player'
 import LyricDesktop from '../settings/LyricDesktop'
 import Search from '../settings/Search'
 import List from '../settings/List'
-import Sync from '../settings/Sync'
-import Backup from '../settings/Backup'
-import Other from '../settings/Other'
-import Version from '../settings/Version'
-import About from '../settings/About'
+import Data from '../settings/Data'
 import { createStyle } from '@/utils/tools'
 import { SETTING_SCREENS, type SettingScreenIds } from '../Main'
 
@@ -19,10 +15,8 @@ type FlatListType = FlatListProps<SettingScreenIds>
 
 const styles = createStyle({
   content: {
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 15,
-    paddingBottom: 15,
+    paddingTop: 8,
+    paddingBottom: 16,
     flex: 0,
   },
 })
@@ -35,11 +29,7 @@ const ListItem = memo(({
     case 'lyric_desktop': return <LyricDesktop />
     case 'search': return <Search />
     case 'list': return <List />
-    case 'sync': return <Sync />
-    case 'backup': return <Backup />
-    case 'other': return <Other />
-    case 'version': return <Version />
-    case 'about': return <About />
+    case 'data': return <Data />
     case 'basic': return <Basic />
   }
 }, () => true)
@@ -54,11 +44,10 @@ export default () => {
       keyboardShouldPersistTaps={'always'}
       renderItem={renderItem}
       keyExtractor={getkey}
+      style={{ backgroundColor: '#f2f2f2' }}
       contentContainerStyle={styles.content}
       maxToRenderPerBatch={2}
-      // updateCellsBatchingPeriod={80}
       windowSize={2}
-      // removeClippedSubviews={true}
       initialNumToRender={1}
     />
   )

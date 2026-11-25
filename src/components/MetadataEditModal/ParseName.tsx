@@ -1,10 +1,11 @@
 import { memo } from 'react'
 
 import { StyleSheet, View } from 'react-native'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import ButtonPrimary from '@/components/common/ButtonPrimary'
 import { useI18n } from '@/lang'
+
+const HAMMER_TEXT = '#4d4d4d'
 
 
 export interface ParseNameProps {
@@ -18,7 +19,6 @@ const parsePath = (fileName: string) => {
 }
 
 export default memo(({ fileName, onNameChanged, onSingerChanged }: ParseNameProps) => {
-  const theme = useTheme()
   const t = useI18n()
   const handleParseNameSinger = () => {
     const [name, singer] = parsePath(fileName)
@@ -32,13 +32,13 @@ export default memo(({ fileName, onNameChanged, onSingerChanged }: ParseNameProp
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.label} size={14}>{t('metadata_edit_modal_form_parse_name')}</Text>
+      <Text style={styles.label} size={13} color={HAMMER_TEXT}>{t('metadata_edit_modal_form_parse_name')}</Text>
       <View style={styles.btns}>
-        <ButtonPrimary style={{ backgroundColor: theme['c-button-background'] }} onPress={handleParseNameSinger}>
-          <Text color={theme['c-button-font']} size={13}>{t('metadata_edit_modal_form_parse_name_singer')}</Text>
+        <ButtonPrimary onPress={handleParseNameSinger}>
+          <Text color={HAMMER_TEXT} size={13}>{t('metadata_edit_modal_form_parse_name_singer')}</Text>
         </ButtonPrimary>
-        <ButtonPrimary style={{ backgroundColor: theme['c-button-background'] }} onPress={handleParseSingerName}>
-          <Text color={theme['c-button-font']} size={13}>{t('metadata_edit_modal_form_parse_singer_name')}</Text>
+        <ButtonPrimary onPress={handleParseSingerName}>
+          <Text color={HAMMER_TEXT} size={13}>{t('metadata_edit_modal_form_parse_singer_name')}</Text>
         </ButtonPrimary>
       </View>
     </View>
@@ -47,14 +47,13 @@ export default memo(({ fileName, onNameChanged, onSingerChanged }: ParseNameProp
 
 const styles = StyleSheet.create({
   container: {
-    // paddingLeft: 25,
-    marginBottom: 15,
+    marginBottom: 12,
   },
   label: {
-    marginBottom: 2,
+    marginBottom: 4,
+    fontWeight: 'bold',
   },
   btns: {
-    marginTop: 5,
     flexDirection: 'row',
   },
 })

@@ -4,7 +4,6 @@ import CheckBox from './Checkbox'
 
 import { createStyle, tipDialog } from '@/utils/tools'
 import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
-import { useTheme } from '@/store/theme/hook'
 import Text from '../Text'
 import { Icon } from '../Icon'
 
@@ -24,15 +23,15 @@ export interface CheckBoxProps {
 }
 
 export default ({ check, label, children, onChange, helpTitle, helpDesc, disabled = false, need = false, marginRight = 0, marginBottom = 0, size = 1 }: CheckBoxProps) => {
-  const theme = useTheme()
   const [isDisabled, setDisabled] = useState(false)
+  // 锤子风：选中红色方块勾，未选中浅灰空心框
   const tintColors = {
-    true: theme['c-primary'],
-    false: theme['c-600'],
+    true: '#E64040',
+    false: '#c8c8c8',
   }
   const disabledTintColors = {
-    true: theme['c-primary-alpha-600'],
-    false: theme['c-400'],
+    true: '#e8a0a0',
+    false: '#dedede',
   }
 
   useEffect(() => {
@@ -76,7 +75,7 @@ export default ({ check, label, children, onChange, helpTitle, helpDesc, disable
       ? (
           <View style={contentStyle}>
             <CheckBox status={check ? 'checked' : 'unchecked'} disabled={true} tintColors={disabledTintColors} size={size} />
-            <View style={labelStyle}>{label ? <Text style={styles.name} color={theme['c-500']} size={15 * size}>{label}</Text> : children}</View>
+            <View style={labelStyle}>{label ? <Text style={styles.name} color={'#4d4d4d'} size={15 * size}>{label}</Text> : children}</View>
             {helpComponent}
           </View>
         )

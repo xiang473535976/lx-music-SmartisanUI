@@ -4,16 +4,15 @@ import { createStyle } from '@/utils/tools'
 import Dialog, { type DialogType } from '@/components/common/Dialog'
 import { FlatList, ScrollView, TouchableOpacity, View, type FlatListProps as _FlatListProps } from 'react-native'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { useTheme } from '@/store/theme/hook'
 import { Icon } from '@/components/common/Icon'
 import { useHorizontalMode, useUnmounted } from '@/utils/hooks'
 import { useI18n } from '@/lang'
+import EmptyView from '@/components/common/EmptyView'
 import Button from '@/components/common/Button'
 import { useSourceListI18n } from '@/components/SourceSelector'
 import { searchMusic } from '@/utils/musicSdk'
 import { toNewMusicInfo } from '@/utils'
 import { handleShowMusicSourceDetail, handleToggleSource } from './listAction'
-import { BorderRadius, BorderWidths } from '@/theme'
 import playerState from '@/store/player/state'
 import { LIST_IDS } from '@/config/constant'
 import { addTempPlayList } from '@/core/player/tempPlayList'
@@ -22,6 +21,14 @@ import { playNext } from '@/core/player/player'
 type FlatListProps = _FlatListProps<LX.Music.MusicInfoOnline>
 const ITEM_HEIGHT = scaleSizeH(56)
 
+// 锤子风配色
+const HAMMER_RED = '#E64040'
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_SUB = '#939396'
+const HAMMER_LINE = '#ededed'
+const HAMMER_ACTIVE_BG = '#cdcdcd'
+const HAMMER_BTN_BORDER = '#ccdcdbdb'
+
 
 const Tabs = <T extends LX.OnlineSource>({ list, source, onChangeSource }: {
   list: T[]
@@ -29,21 +36,21 @@ const Tabs = <T extends LX.OnlineSource>({ list, source, onChangeSource }: {
   onChangeSource: (source: T) => void
 }) => {
   const list_t = useSourceListI18n(list)
-  const theme = useTheme()
   const scrollViewRef = useRef<ScrollView>(null)
 
   return (
-    <ScrollView ref={scrollViewRef} style={styles.tabContainer} keyboardShouldPersistTaps={'always'} horizontal>
+    <ScrollView ref={scrollViewRef} style={styles.tabContainer} keyboardShouldPersistTaps={'always'} horizontal showsHorizontalScrollIndicator={false}>
       {
         list_t.map(s => (
           <TouchableOpacity
-            style={{ ...styles.tabButton, borderBottomColor: source == s.action ? theme['c-primary-background-active'] : 'transparent' }}
+            style={{ ...styles.tabButton, backgroundColor: source == s.action ? HAMMER_ACTIVE_BG : 'transparent' }}
             onPress={() => {
               onChangeSource(s.action as T)
             }}
             key={s.action}
+            activeOpacity={0.6}
           >
-            <Text style={styles.tabButtonText} color={source == s.action ? theme['c-primary-font-active'] : theme['c-font']}>{s.label}</Text>
+            <Text size={14} style={source == s.action ? styles.tabButtonTextActive : styles.tabButtonText} color={source == s.action ? '#ffffff' : HAMMER_TEXT}>{s.label}</Text>
           </TouchableOpacity>
         ))
       }
@@ -52,7 +59,6 @@ const Tabs = <T extends LX.OnlineSource>({ list, source, onChangeSource }: {
 }
 
 const Empty = ({ loading, error, onReload }: { loading: boolean, error: boolean, onReload: () => void }) => {
-  const theme = useTheme()
   const t = useI18n()
   const label = loading
     ? t('list_loading')
@@ -60,15 +66,13 @@ const Empty = ({ loading, error, onReload }: { loading: boolean, error: boolean,
       ? t('list_error')
       : t('no_item')
   return (
-    <View style={styles.noitem}>
-      {
-        error ? (
-          <Text onPress={onReload} color={theme['c-font-label']}>{label}</Text>
-        ) : (
-          <Text color={theme['c-font-label']}>{label}</Text>
+    error
+      ? (
+          <View style={styles.noitem}>
+            <Text onPress={onReload} size={13} color={HAMMER_SUB}>{label}</Text>
+          </View>
         )
-      }
-    </View>
+      : <EmptyView text={label} icon={loading ? 'music_time' : null} />
   )
 }
 
@@ -77,36 +81,30 @@ const ListItem = memo(({ info, onPlay, onOpenDetail }: {
   onPlay: (info: LX.Music.MusicInfoOnline) => void
   onOpenDetail: (info: LX.Music.MusicInfoOnline) => void
 }) => {
-  const theme = useTheme()
-
   return (
     <View style={{ ...styles.listItem, height: ITEM_HEIGHT }} onStartShouldSetResponder={() => true}>
-      {/* <View style={styles.listItemLabel}>
-        <Text style={styles.sn} size={13} color={theme['c-300']}>{info.index + 1}</Text>
-      </View> */}
       <View style={styles.listItemInfo}>
-        <Text color={theme['c-font']} size={14} numberOfLines={1}>{info.name}</Text>
+        <Text color={HAMMER_TEXT} size={14} numberOfLines={1}>{info.name}</Text>
         <View style={styles.listItemAlbum}>
-          <Text color={theme['c-font']} size={12} numberOfLines={1}>
+          <Text color={HAMMER_SUB} size={12} numberOfLines={1}>
             {info.singer}
             {
               info.meta.albumName ? (
-                <Text color={theme['c-font-label']} size={12} numberOfLines={1}> ({info.meta.albumName})</Text>
+                <Text color={HAMMER_SUB} size={12} numberOfLines={1}> ({info.meta.albumName})</Text>
               ) : null
             }
           </Text>
         </View>
       </View>
       <View style={styles.listItemLabel}>
-        {/* <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{ info.source }</Text> */}
-        <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{info.interval}</Text>
+        <Text style={styles.listItemLabelText} size={12} color={HAMMER_SUB}>{info.interval}</Text>
       </View>
       <View style={styles.listItemBtns}>
         <Button style={styles.listItemBtn} onPress={() => { onOpenDetail(info) }}>
-          <Icon name="share" style={{ color: theme['c-button-font'] }} size={18} />
+          <Icon name="share" color="#939396" size={18} />
         </Button>
         <Button style={styles.listItemBtn} onPress={() => { onPlay(info) }}>
-          <Icon name="play" style={{ color: theme['c-button-font'] }} size={18} />
+          <Icon name="play" color={HAMMER_RED} size={18} />
         </Button>
       </View>
     </View>
@@ -161,7 +159,6 @@ const List = ({ source, lists, onPlay }: {
 }
 
 const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicInfo, onConfirm: (info: LX.Music.MusicInfoOnline) => void, toggleSource: LX.Music.MusicInfoOnline | null }) => {
-  const theme = useTheme()
   const isHorizontalMode = useHorizontalMode()
   const t = useI18n()
 
@@ -170,18 +167,18 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
       <View style={styles.detailContainerX}>
       <View style={styles.detailInfo}>
         <View style={styles.detailInfoName}>
-          <Text style={styles.detailInfoNameText} color={theme['c-font']} size={13} numberOfLines={2}>
+          <Text style={styles.detailInfoNameText} color={HAMMER_TEXT} size={13} numberOfLines={2}>
             {info.name}
           </Text>
-          <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.source}</Text>
-          <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.interval}</Text>
+          <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_RED}>{info.source}</Text>
+          <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_SUB}>{info.interval}</Text>
         </View>
         <View style={styles.listItemAlbum}>
-          <Text color={theme['c-font']} size={12} numberOfLines={1}>
+          <Text color={HAMMER_SUB} size={12} numberOfLines={1}>
             {info.singer}
             {
               info.meta.albumName ? (
-                <Text color={theme['c-font-label']} size={12} numberOfLines={1}> ({info.meta.albumName})</Text>
+                <Text color={HAMMER_SUB} size={12} numberOfLines={1}> ({info.meta.albumName})</Text>
               ) : null
             }
           </Text>
@@ -193,18 +190,18 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
             <Text>→</Text>
             <View style={styles.detailInfo}>
               <View style={styles.detailInfoName}>
-                <Text style={styles.detailInfoNameText} color={theme['c-font']} size={13} numberOfLines={2}>
+                <Text style={styles.detailInfoNameText} color={HAMMER_TEXT} size={13} numberOfLines={2}>
                   {toggleSource.name}
                 </Text>
-                <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.source}</Text>
-                <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.interval}</Text>
+                <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_RED}>{toggleSource.source}</Text>
+                <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_SUB}>{toggleSource.interval}</Text>
               </View>
               <View style={styles.listItemAlbum}>
-                <Text color={theme['c-font']} size={12} numberOfLines={1}>
+                <Text color={HAMMER_SUB} size={12} numberOfLines={1}>
                   {toggleSource.singer}
                   {
                     toggleSource.meta.albumName ? (
-                      <Text color={theme['c-font-label']} size={12} numberOfLines={1}> ({toggleSource.meta.albumName})</Text>
+                      <Text color={HAMMER_SUB} size={12} numberOfLines={1}> ({toggleSource.meta.albumName})</Text>
                     ) : null
                   }
                 </Text>
@@ -218,10 +215,10 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
         onPress={() => {
           onConfirm(toggleSource!)
         }}
-        style={{ ...styles.button, backgroundColor: theme['c-button-background'] }}
+        style={!toggleSource ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
         disabled={!toggleSource}
       >
-        <Text color={theme['c-button-font']}>{t('music_toggle__confirm')}</Text>
+        <Text size={14} color={toggleSource ? HAMMER_TEXT : '#b0b0b0'} style={styles.buttonText}>{t('music_toggle__confirm')}</Text>
       </Button>
     </View>
   ) : (
@@ -229,18 +226,18 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
       <View style={styles.detailContainerY}>
         <View style={styles.detailInfo}>
           <View style={styles.detailInfoName}>
-            <Text style={styles.detailInfoNameText} color={theme['c-font']} size={14} numberOfLines={2}>
+            <Text style={styles.detailInfoNameText} color={HAMMER_TEXT} size={14} numberOfLines={2}>
               {info.name}
             </Text>
-            <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.source}</Text>
-            <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.interval}</Text>
+            <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_RED}>{info.source}</Text>
+            <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_SUB}>{info.interval}</Text>
           </View>
           <View style={styles.listItemAlbum}>
-            <Text color={theme['c-font']} size={12} numberOfLines={1}>
+            <Text color={HAMMER_SUB} size={12} numberOfLines={1}>
               {info.singer}
               {
                 info.meta.albumName ? (
-                  <Text color={theme['c-font-label']} size={12} numberOfLines={1}> ({info.meta.albumName})</Text>
+                  <Text color={HAMMER_SUB} size={12} numberOfLines={1}> ({info.meta.albumName})</Text>
                 ) : null
               }
             </Text>
@@ -252,18 +249,18 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
               <Text>↓</Text>
               <View style={styles.detailInfo}>
                 <View style={styles.detailInfoName}>
-                  <Text style={styles.detailInfoNameText} color={theme['c-font']} size={14} numberOfLines={2}>
+                  <Text style={styles.detailInfoNameText} color={HAMMER_TEXT} size={14} numberOfLines={2}>
                     {toggleSource.name}
                   </Text>
-                  <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.source}</Text>
-                  <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.interval}</Text>
+                  <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_RED}>{toggleSource.source}</Text>
+                  <Text style={styles.detailInfoLabelText} size={12} color={HAMMER_SUB}>{toggleSource.interval}</Text>
                 </View>
                 <View style={styles.listItemAlbum}>
-                  <Text color={theme['c-font']} size={12} numberOfLines={1}>
+                  <Text color={HAMMER_SUB} size={12} numberOfLines={1}>
                     {toggleSource.singer}
                     {
                       toggleSource.meta.albumName ? (
-                        <Text color={theme['c-font-label']} size={12} numberOfLines={1}> ({toggleSource.meta.albumName})</Text>
+                        <Text color={HAMMER_SUB} size={12} numberOfLines={1}> ({toggleSource.meta.albumName})</Text>
                       ) : null
                     }
                   </Text>
@@ -277,10 +274,10 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
         onPress={() => {
           onConfirm(toggleSource!)
         }}
-        style={{ ...styles.button, backgroundColor: theme['c-button-background'] }}
+        style={(!toggleSource || toggleSource.id == info.id) ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
         disabled={!toggleSource || toggleSource.id == info.id}
       >
-        <Text color={theme['c-button-font']}>{t('music_toggle__confirm')}</Text>
+        <Text size={14} color={(!toggleSource || toggleSource.id == info.id) ? '#b0b0b0' : HAMMER_TEXT} style={styles.buttonText}>{t('music_toggle__confirm')}</Text>
       </Button>
     </View>
   )
@@ -416,25 +413,21 @@ const styles = createStyle({
   tabContainer: {
     flexGrow: 0,
     flexShrink: 0,
-    // paddingLeft: 5,
-    // paddingRight: 5,
     paddingVertical: 6,
   },
   tabButton: {
-    // height: 38,
-    // lineHeight: 38,
     justifyContent: 'center',
-    paddingHorizontal: 6,
-    // width: 80,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-    borderBottomWidth: BorderWidths.normal3,
+    paddingHorizontal: 14,
+    height: 32,
   },
   tabButtonText: {
-    // height: 38,
-    // lineHeight: 38,
     textAlign: 'center',
     paddingHorizontal: 2,
-    paddingVertical: 5,
+  },
+  tabButtonTextActive: {
+    textAlign: 'center',
+    paddingHorizontal: 2,
+    fontWeight: 'bold',
   },
   list: {
     flexGrow: 1,
@@ -444,6 +437,8 @@ const styles = createStyle({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: HAMMER_LINE,
   },
   // sn: {
   //   width: 38,
@@ -529,10 +524,21 @@ const styles = createStyle({
     justifyContent: 'center',
   },
   button: {
-    borderRadius: BorderRadius.normal,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    height: 32,
+    paddingHorizontal: 14,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: HAMMER_BTN_BORDER,
+    backgroundColor: '#ffffff',
+  },
+  buttonDisabled: {
+    borderColor: '#e5e5e5',
+    backgroundColor: '#fafafa',
+  },
+  buttonText: {
+    fontWeight: 'bold',
   },
 })
 

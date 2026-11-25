@@ -14,6 +14,7 @@ import {
   clearPlayedList,
   addPlayedList,
   removePlayedList,
+  addPlayHistory,
 } from '@/core/player/playedList'
 import {
   clearTempPlayeList,
@@ -174,6 +175,9 @@ const handleRestorePlay = async(restorePlayInfo: LX.Player.SavedPlayInfo) => {
     ) return
     setMusicInfo({ pic: url })
     global.app_event.picUpdated()
+  }).catch((err: any) => {
+    // 本地音乐找不到可用的在线封面源时会抛 source not found，这里吞掉避免 unhandled rejection
+    console.log(err)
   })
 
   void getLyricInfo({ musicInfo }).then((lyricInfo) => {
@@ -193,6 +197,7 @@ const handleRestorePlay = async(restorePlayInfo: LX.Player.SavedPlayInfo) => {
   })
 
   if (settingState.setting['player.togglePlayMethod'] == 'random' && !playMusicInfo.isTempPlay) addPlayedList(playMusicInfo as LX.Player.PlayMusicInfo)
+  addPlayHistory(playMusicInfo as LX.Player.PlayMusicInfo)
 }
 
 
@@ -206,6 +211,9 @@ const debouncePlay = debounceBackgroundTimer((musicInfo: LX.Player.PlayMusic) =>
       playerState.loadErrorPicUrl == url) return
     setMusicInfo({ pic: url })
     global.app_event.picUpdated()
+  }).catch((err: any) => {
+    // 同上：本地音乐无可用在线封面源时不要冒泡成 unhandled rejection
+    console.log(err)
   })
 
   void getLyricInfo({ musicInfo }).then((lyricInfo) => {
@@ -261,6 +269,7 @@ const handlePlay = async() => {
 
 
   if (settingState.setting['player.togglePlayMethod'] == 'random' && !playMusicInfo.isTempPlay) addPlayedList(playMusicInfo as LX.Player.PlayMusicInfo)
+  addPlayHistory(playMusicInfo as LX.Player.PlayMusicInfo)
 
   debouncePlay(musicInfo)
 }

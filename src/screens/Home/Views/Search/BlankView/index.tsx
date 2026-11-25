@@ -1,7 +1,6 @@
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import { useSettingValue } from '@/store/setting/hook'
-import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { ScrollView, View } from 'react-native'
@@ -25,7 +24,6 @@ export default forwardRef<BlankViewType, BlankViewProps>(({ onSearch }, ref) => 
   const isShowHotSearch = useSettingValue('search.isShowHotSearch')
   const isShowHistorySearch = useSettingValue('search.isShowHistorySearch')
   const t = useI18n()
-  const theme = useTheme()
 
   const handleShow = (source: Source) => {
     hotSearchRef.current?.show(source)
@@ -57,7 +55,7 @@ export default forwardRef<BlankViewType, BlankViewProps>(({ onSearch }, ref) => 
           )
         : (
             <View style={styles.welcome}>
-              <Text size={22} color={theme['c-font-label']}>{t('search__welcome')}</Text>
+              <Text size={22} color={'#939396'}>{t('search__welcome')}</Text>
             </View>
           )
       : null
@@ -70,8 +68,8 @@ const styles = createStyle({
   content: {
     // paddingTop: 15,
     paddingBottom: 15,
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingLeft: 14,
+    paddingRight: 14,
   },
   welcome: {
     flex: 1,

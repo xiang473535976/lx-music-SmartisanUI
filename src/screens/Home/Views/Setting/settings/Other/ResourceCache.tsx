@@ -72,9 +72,11 @@ export default memo(() => {
 
 const styles = StyleSheet.create({
   cacheSize: {
-    marginBottom: 5,
+    marginBottom: 8,
   },
   clearBtn: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 4,
   },
 })

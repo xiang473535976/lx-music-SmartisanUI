@@ -10,6 +10,7 @@ import { throttle } from './common'
 const fontSizeKey = storageDataPrefix.fontSize
 const themeKey = storageDataPrefix.theme
 const playInfoStorageKey = storageDataPrefix.playInfo
+const playHistoryKey = storageDataPrefix.playHistory
 const userListKey = storageDataPrefix.userList
 const viewPrevStateKey = storageDataPrefix.viewPrevState
 const listScrollPositionKey = storageDataPrefix.listScrollPosition
@@ -21,6 +22,7 @@ const searchHistoryListKey = storageDataPrefix.searchHistoryList
 const songListSettingKey = storageDataPrefix.songListSetting
 const leaderboardSettingKey = storageDataPrefix.leaderboardSetting
 const listPrevSelectIdKey = storageDataPrefix.listPrevSelectId
+const listRecentIdKey = storageDataPrefix.listRecentId
 const syncAuthKeyPrefix = storageDataPrefix.syncAuthKey
 const syncHostPrefix = storageDataPrefix.syncHost
 const syncHostHistoryPrefix = storageDataPrefix.syncHostHistory
@@ -112,6 +114,21 @@ export const getListPrevSelectId = async() => {
 export const saveListPrevSelectId = (id: string) => {
   listPrevSelectId = id
   saveListPrevSelectIdThrottle()
+}
+
+// 「我的列表」顶部条第 4 个位置展示的自定义列表：记住最近打开过的那个
+let listRecentId: string
+const saveListRecentIdThrottle = throttle(() => {
+  void saveData(listRecentIdKey, listRecentId)
+}, 200)
+export const getListRecentId = async() => {
+  // eslint-disable-next-line require-atomic-updates
+  listRecentId ??= await getData<string>(listRecentIdKey) ?? ''
+  return listRecentId || ''
+}
+export const saveListRecentId = (id: string) => {
+  listRecentId = id
+  saveListRecentIdThrottle()
 }
 
 const saveListUpdateInfoThrottle = throttle(() => {
@@ -436,6 +453,19 @@ export const savePlayInfo = async(playInfo: LX.Player.SavedPlayInfo) => {
 // 获取上次关闭时的当前歌曲播放信息
 export const getPlayInfo = async() => {
   return getData<LX.Player.SavedPlayInfo | null>(playInfoStorageKey)
+}
+
+// 播放历史持久化：每次播放歌曲都会记录到 playHistory（与随机播放去重用的 playedList 分离）
+let playHistorySnapshot: LX.Player.PlayMusicInfo[] = []
+const savePlayHistoryThrottle = throttle(() => {
+  void saveData(playHistoryKey, playHistorySnapshot)
+}, 1000)
+export const savePlayHistory = (list: LX.Player.PlayMusicInfo[]) => {
+  playHistorySnapshot = list
+  savePlayHistoryThrottle()
+}
+export const getPlayHistory = async() => {
+  return getData<LX.Player.PlayMusicInfo[] | null>(playHistoryKey)
 }
 
 let selectedManagedFolder: string | null = ''

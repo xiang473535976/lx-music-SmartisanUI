@@ -3,10 +3,12 @@ import Text from '@/components/common/Text'
 import { type LayoutChangeEvent, View } from 'react-native'
 import Input, { type InputType } from '@/components/common/Input'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import Dialog, { type DialogType } from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
+
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ccdcdbdb'
 
 interface RuleInputType {
   setText: (text: string) => void
@@ -14,7 +16,6 @@ interface RuleInputType {
   focus: () => void
 }
 const RuleInput = forwardRef<RuleInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const t = useI18n()
   const [text, setText] = useState('')
   const inputRef = useRef<InputType>(null)
@@ -46,7 +47,7 @@ const RuleInput = forwardRef<RuleInputType, {}>((props, ref) => {
         textAlignVertical="top"
         placeholder={t('setting_dislike_list_input_tip')}
         size={13}
-        style={{ ...styles.input, height, backgroundColor: theme['c-primary-input-background'] }}
+        style={{ ...styles.input, height, backgroundColor: '#ffffff' }}
       />
     </View>
   )
@@ -66,7 +67,6 @@ export default forwardRef<DislikeEditModalType, DislikeEditModalProps>(({ onSave
   // const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const inputRef = useRef<RuleInputType>(null)
   const [visible, setVisible] = useState(false)
-  const theme = useTheme()
   const t = useI18n()
 
   const handleShow = (rules: string) => {
@@ -106,14 +106,14 @@ export default forwardRef<DislikeEditModalType, DislikeEditModalProps>(({ onSave
           <Dialog height='80%' ref={dialogRef} bgHide={false}>
             <View style={styles.content}>
               <RuleInput ref={inputRef} />
-              <Text style={styles.inputTipText} size={13} color={theme['c-600']}>{t('setting_dislike_list_tips')}</Text>
+              <Text style={styles.inputTipText} size={13} color={'#939396'}>{t('setting_dislike_list_tips')}</Text>
             </View>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={handleCancel}>
-                <Text size={14} color={theme['c-button-font']}>{t('cancel')}</Text>
+              <Button style={styles.btn} onPress={handleCancel}>
+                <Text size={14} color={HAMMER_TEXT} style={styles.btnText}>{t('cancel')}</Text>
               </Button>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={handleConfirm}>
-                <Text size={14} color={theme['c-button-font']}>{t('confirm')}</Text>
+              <Button style={styles.btn} onPress={handleConfirm}>
+                <Text size={14} color={HAMMER_TEXT} style={styles.btnText}>{t('confirm')}</Text>
               </Button>
             </View>
           </Dialog>
@@ -126,8 +126,8 @@ const styles = createStyle({
   content: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingHorizontal: 15,
-    paddingTop: 15,
+    paddingHorizontal: 14,
+    paddingTop: 14,
     paddingBottom: 10,
     flexDirection: 'column',
   },
@@ -146,31 +146,37 @@ const styles = createStyle({
   },
   input: {
     minWidth: 290,
-    // borderRadius: 4,
-    // borderTopRightRadius: 4,
-    // borderBottomRightRadius: 4,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 8,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
   },
   inputTipText: {
     marginTop: 8,
-    // lineHeight: 18,
-    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
 
   btns: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingBottom: 15,
-    paddingLeft: 15,
-    // paddingRight: 15,
+    paddingBottom: 14,
+    paddingLeft: 14,
+    paddingRight: 4,
   },
   btn: {
     flex: 1,
-    padding: 10,
+    height: 32,
+    justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
-    marginRight: 15,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
+    backgroundColor: '#ffffff',
+    marginRight: 10,
+  },
+  btnText: {
+    fontWeight: 'bold',
   },
 })
 

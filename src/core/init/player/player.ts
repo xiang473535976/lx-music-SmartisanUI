@@ -1,4 +1,4 @@
-import { addPlayedList, clearPlayedList } from '@/core/player/playedList'
+import { addPlayedList, clearPlayedList, restorePlayHistory } from '@/core/player/playedList'
 import { pause, playNext } from '@/core/player/player'
 import { setStatusText, setIsPlay } from '@/core/player/playStatus'
 // import { resetPlayerMusicInfo } from '@/core/player/playInfo'
@@ -9,6 +9,8 @@ import settingState from '@/store/setting/state'
 
 
 export default async(setting: LX.AppSetting) => {
+  void restorePlayHistory()
+
   const setPlayStatus = () => {
     setIsPlay(true)
   }

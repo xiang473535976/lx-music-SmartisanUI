@@ -13,7 +13,6 @@ import { updateSetting } from '@/core/common'
 import { addSyncHostHistory, getSyncHost, setSyncHost } from '@/utils/data'
 import { setSyncMessage } from '@/core/sync'
 import { useSettingValue } from '@/store/setting/hook'
-import { useTheme } from '@/store/theme/hook'
 import { useStatus } from '@/store/sync/hook'
 import Text from '@/components/common/Text'
 import { SYNC_CODE } from '@/plugins/sync/constants'
@@ -67,7 +66,6 @@ export default memo(({ host, setHost }: {
   const syncStatus = useStatus()
   const isEnableSync = useSettingValue('sync.enable')
   const isUnmountedRef = useRef(true)
-  const theme = useTheme()
   const [address, setAddress] = useState('')
   const [authCode, setAuthCode] = useState('')
   const confirmAlertRef = useRef<ConfirmAlertType>(null)
@@ -156,8 +154,10 @@ export default memo(({ host, setHost }: {
     <>
       <View style={styles.infoContent}>
         <CheckBoxItem disabled={!host} check={isEnableSync} label={t('setting_sync_enable')} onChange={handleSetEnableSync} />
-        <Text style={styles.textAddr} size={13}>{t('setting_sync_address', { address })}</Text>
-        <Text style={styles.text} size={13}>{t('setting_sync_status', { status })}</Text>
+        <View style={styles.infoText}>
+          <Text style={styles.textAddr} size={13} color={'#939396'}>{t('setting_sync_address', { address })}</Text>
+          <Text style={styles.text} size={13} color={'#939396'}>{t('setting_sync_status', { status })}</Text>
+        </View>
       </View>
       <View style={styles.inputContent} >
         <HostInput setHost={handleUpdateHost} host={host} disabled={isEnableSync} />
@@ -173,7 +173,7 @@ export default memo(({ host, setHost }: {
             placeholder={t('setting_sync_code_input_tip')}
             value={authCode}
             onChangeText={setAuthCode}
-            style={{ ...styles.authCodeInput, backgroundColor: theme['c-primary-background'] }}
+            style={styles.authCodeInput}
           />
         </View>
       </ConfirmAlert>
@@ -186,12 +186,18 @@ const styles = createStyle({
   infoContent: {
     marginTop: 5,
   },
+  infoText: {
+    paddingLeft: 14,
+    paddingRight: 14,
+    paddingTop: 2,
+    paddingBottom: 10,
+    backgroundColor: '#ffffff',
+  },
   textAddr: {
-    marginLeft: 25,
-    marginTop: 5,
+    marginTop: 4,
   },
   text: {
-    marginLeft: 25,
+    marginTop: 2,
   },
   inputContent: {
     marginTop: 8,
@@ -208,6 +214,11 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 260,
+    height: 34,
+    paddingLeft: 8,
+    borderWidth: 0.5,
+    borderColor: '#ccdcdbdb',
+    backgroundColor: '#ffffff',
     borderRadius: 4,
     // paddingTop: 2,
     // paddingBottom: 2,

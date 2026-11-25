@@ -1,157 +1,134 @@
-import { View, TouchableOpacity } from 'react-native'
-// import Button from '@/components/common/Button'
-// import { navigations } from '@/navigation'
-// import { BorderWidths } from '@/theme'
-import { useTheme } from '@/store/theme/hook'
-import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
-import { useI18n } from '@/lang'
-import { createStyle } from '@/utils/tools'
-import { Icon } from '@/components/common/Icon'
-import Text from '@/components/common/Text'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+
 import StatusBar from '@/components/common/StatusBar'
-import { useSettingValue } from '@/store/setting/hook'
-import { scaleSizeH } from '@/utils/pixelRatio'
-import { HEADER_HEIGHT } from '@/config/constant'
-import { type InitState as CommonState } from '@/store/common/state'
-import SearchTypeSelector from '@/screens/Home/Views/Search/SearchTypeSelector'
+import Text from '@/components/common/Text'
+import { setNavActiveId } from '@/core/common'
+import { useI18n } from '@/lang'
+import { SmartisanImages } from '@/resources/smartisan'
+import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
+import { emitEditPress } from '@/screens/LocalMusic/editEvent'
+import { createStyle } from '@/utils/tools'
 
-const headerComponents: Partial<Record<CommonState['navActiveId'], React.ReactNode>> = {
-  nav_search: <SearchTypeSelector />,
-}
+// 锤子音乐标题栏实测（res/layout/music_toolbar.xml）：
+// 高 48dp；左侧 tv_edit 高 30dp / minWidth 46dp / 圆角 4dp / 1.5px #ccdcdbdb 描边；
+// 居中标题 18sp bold；右侧 iv_search 48x28dp，同样的描边按钮
+const HEADER_HEIGHT = 48
+const BTN_BORDER_COLOR = '#ccdcdbdb'
+const BTN_TEXT_COLOR = '#4d4d4d'
 
+// 本地音乐已改成独立页面（自带标题栏），底部标签这里不需要「编辑」入口
+const EDIT_TABS: string[] = []
 
-// const LeftTitle = () => {
-//   const id = useNavActiveId()
-//   const t = useI18n()
+// 这些页面本身就是搜索页，不再重复显示搜索按钮
+const NO_SEARCH_TABS: string[] = ['nav_search', 'nav_mine', 'nav_songlist', 'nav_top']
 
-//   return <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
-// }
-const LeftHeader = () => {
-  const theme = useTheme()
+const HeaderBar = () => {
   const id = useNavActiveId()
   const t = useI18n()
   const statusBarHeight = useStatusbarHeight()
 
-  const openMenu = () => {
-    global.app_event.changeMenuVisible(true)
-  }
+  const showEdit = EDIT_TABS.includes(id)
+  const showSearch = !NO_SEARCH_TABS.includes(id)
 
   return (
     <View style={{
-      ...styles.container,
-      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
-      paddingTop: statusBarHeight,
+      ...styles.outer,
+      height: HEADER_HEIGHT + statusBarHeight,
+      backgroundColor: '#ffffff',
+      borderBottomColor: '#ededed',
     }}>
-      <View style={styles.left}>
-        <TouchableOpacity style={styles.btn} onPress={openMenu}>
-          <Icon color={theme['c-font']} name="menu" size={18} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.titleBtn} onPress={openMenu}>
-          <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
-        </TouchableOpacity>
+      <View style={{ height: statusBarHeight }} />
+      <View style={styles.row}>
+        {showEdit
+          ? (
+              <TouchableOpacity
+                style={styles.editBtn}
+                activeOpacity={0.6}
+                onPress={() => { emitEditPress() }}
+              >
+                <Text size={13} color={BTN_TEXT_COLOR} style={styles.editText}>{t('smartisan_edit')}</Text>
+              </TouchableOpacity>
+            )
+          : <View style={styles.editPlaceholder} />}
+        <View style={styles.titleWrap} pointerEvents="none">
+          <Text size={18} style={styles.title} numberOfLines={1}>{t(id)}</Text>
+        </View>
+        {showSearch
+          ? (
+              <TouchableOpacity
+                style={styles.searchBtn}
+                activeOpacity={0.6}
+                onPress={() => { setNavActiveId('nav_search') }}
+              >
+                <Image source={SmartisanImages.search} style={styles.searchIcon} resizeMode="contain" />
+              </TouchableOpacity>
+            )
+          : null}
       </View>
-      {headerComponents[id] ?? null}
-
-      {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
-        <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
-      </TouchableOpacity> */}
     </View>
   )
 }
 
-
-// const RightTitle = () => {
-//   const id = useNavActiveId()
-//   const t = useI18n()
-
-//   return <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
-// }
-const RightHeader = () => {
-  const theme = useTheme()
-  const t = useI18n()
-  const id = useNavActiveId()
-  const statusBarHeight = useStatusbarHeight()
-
-  const openMenu = () => {
-    global.app_event.changeMenuVisible(true)
-  }
-  return (
-    <View style={{
-      ...styles.container,
-      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
-      paddingTop: statusBarHeight,
-    }}>
-      <View style={styles.left}>
-        <TouchableOpacity style={styles.titleBtn} onPress={openMenu}>
-          <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
-        </TouchableOpacity>
-      </View>
-      {headerComponents[id] ?? null}
-      <TouchableOpacity style={styles.btn} onPress={openMenu}>
-        <Icon color={theme['c-font']} name="menu" size={18} />
-      </TouchableOpacity>
-      {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
-        <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
-      </TouchableOpacity> */}
-    </View>
-  )
-}
-
-const Header = () => {
-  const drawerLayoutPosition = useSettingValue('common.drawerLayoutPosition')
-
-  return (
-    <>
-      <StatusBar />
-      {
-        drawerLayoutPosition == 'left'
-          ? <LeftHeader />
-          : <RightHeader />
-      }
-
-    </>
-  )
-}
-
+const Header = () => (
+  <>
+    <StatusBar />
+    <HeaderBar />
+  </>
+)
 
 const styles = createStyle({
-  container: {
-    // width: '100%',
-    paddingRight: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.1)',
+  outer: {
+    width: '100%',
     zIndex: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  left: {
+  row: {
     flex: 1,
     flexDirection: 'row',
-    paddingLeft: 5,
     alignItems: 'center',
-    height: '100%',
+    paddingHorizontal: 8,
   },
-  btn: {
-    // flex: 1,
-    width: HEADER_HEIGHT,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
+  editBtn: {
+    height: 30,
+    minWidth: 46,
+    paddingHorizontal: 6,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: BTN_BORDER_COLOR,
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
   },
-  titleBtn: {
-    flex: 1,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-    height: '100%',
+  editText: {
+    fontWeight: 'bold',
+  },
+  editPlaceholder: {
+    width: 0,
+  },
+  titleWrap: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  leftTitle: {
-    paddingLeft: 14,
-    paddingRight: 16,
+  title: {
+    fontWeight: 'bold',
   },
-  rightTitle: {
-    paddingLeft: 16,
-    paddingRight: 16,
+  searchBtn: {
+    marginLeft: 'auto',
+    width: 48,
+    height: 28,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: BTN_BORDER_COLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchIcon: {
+    width: 16,
+    height: 16,
   },
 })
 

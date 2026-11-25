@@ -6,15 +6,12 @@ import LeftBar, { type LeftBarType, type LeftBarProps } from './LeftBar'
 import MusicList, { type MusicListType } from '../MusicList'
 import { getLeaderboardSetting, saveLeaderboardSetting } from '@/utils/data'
 // import { BorderWidths } from '@/theme'
-// import { useTheme } from '@/store/theme/hook'
-
 
 export default () => {
   const leftBarRef = useRef<LeftBarType>(null)
   const musicListRef = useRef<MusicListType>(null)
   const isUnmountedRef = useRef(false)
-  // const theme = useTheme()
-
+  //
   const handleChangeBound: LeftBarProps['onChangeList'] = (source, id) => {
     musicListRef.current?.loadList(source, id)
     void saveLeaderboardSetting({

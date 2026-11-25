@@ -4,11 +4,14 @@ import { type InitState } from '@/store/hotSearch/state'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { clearHistoryList, getSearchHistory, removeHistoryWord } from '@/core/search/search'
 import { Icon } from '@/components/common/Icon'
 
+const SECTION_TITLE = '#5b5b5b'
+const CHIP_BG = '#f4f4f4'
+const CHIP_TEXT = '#4d4d4d'
+const CLEAR_ICON = '#b0b0b0'
 
 export type List = NonNullable<InitState['sourceList'][keyof InitState['sourceList']]>
 
@@ -17,14 +20,13 @@ const ListItem = ({ keyword, onSearch, onRemove }: {
   onSearch: (keyword: string) => void
   onRemove: (keyword: string) => void
 }) => {
-  const theme = useTheme()
   return (
     <Button
-      style={{ ...styles.button, backgroundColor: theme['c-button-background'] }}
+      style={styles.button}
       onPress={() => { onSearch(keyword) }}
       onLongPress={() => { onRemove(keyword) }}
     >
-      <Text color={theme['c-button-font']} size={13}>{keyword}</Text>
+      <Text color={CHIP_TEXT} size={13}>{keyword}</Text>
     </Button>
   )
 }
@@ -41,7 +43,6 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
   const [list, setList] = useState<List>([])
   const isUnmountedRef = useRef(false)
   const t = useI18n()
-  const theme = useTheme()
 
   useEffect(() => {
     isUnmountedRef.current = false
@@ -78,16 +79,18 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
     list.length
       ? (
           <View>
-            <View style={styles.titleContent}>
-              <Text size={16}>{t('search_history_search')}</Text>
+            <View style={styles.titleBar}>
+              <Text style={styles.title} size={13} color={SECTION_TITLE}>{t('search_history_search')}</Text>
               <TouchableOpacity onPress={handleClear} style={styles.titleBtn}>
-                <Icon name="eraser" color={theme['c-300']} size={14} />
+                <Icon name="eraser" color={CLEAR_ICON} size={14} />
               </TouchableOpacity>
             </View>
-            <View style={styles.list}>
-              {
-                list.map(keyword => <ListItem keyword={keyword} key={keyword} onSearch={props.onSearch} onRemove={handleRemove} />)
-              }
+            <View style={styles.listWrap}>
+              <View style={styles.list}>
+                {
+                  list.map(keyword => <ListItem keyword={keyword} key={keyword} onSearch={props.onSearch} onRemove={handleRemove} />)
+                }
+              </View>
             </View>
           </View>
         )
@@ -97,25 +100,35 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
 
 
 const styles = createStyle({
-  titleContent: {
-    paddingTop: 15,
+  titleBar: {
+    height: 26,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingLeft: 14,
+    paddingRight: 8,
+    marginLeft: -14,
+    marginRight: -14,
+    backgroundColor: '#ededed',
   },
   title: {
-    // paddingLeft: 15,
-    // paddingBottom: 5,
+    fontWeight: 'bold',
   },
   titleBtn: {
-    marginLeft: 10,
+    marginLeft: 'auto',
     padding: 5,
   },
+  listWrap: {
+    backgroundColor: '#ffffff',
+    marginLeft: -14,
+    marginRight: -14,
+    paddingLeft: 14,
+    paddingRight: 14,
+    paddingTop: 4,
+    paddingBottom: 14,
+  },
   list: {
-    // paddingLeft: 15,
-    // paddingRight: 15,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // paddingBottom: 15,
   },
   button: {
     textAlign: 'center',
@@ -126,5 +139,6 @@ const styles = createStyle({
     borderRadius: 4,
     marginRight: 10,
     marginTop: 8,
+    backgroundColor: CHIP_BG,
   },
 })

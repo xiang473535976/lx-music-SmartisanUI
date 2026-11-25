@@ -1,10 +1,14 @@
 import { useCallback, useRef } from 'react'
+import { View } from 'react-native'
 import Text from '@/components/common/Text'
-import { useTheme } from '@/store/theme/hook'
 import Button, { type BtnType } from '@/components/common/Button'
 import { createStyle } from '@/utils/tools'
 import { type BoardItem } from '@/store/leaderboard/state'
 import { Icon } from '@/components/common/Icon'
+
+const HAMMER_RED = '#E64040'
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ededed'
 
 // index={index}
 // longPressIndex={longPressIndex}
@@ -21,7 +25,6 @@ export interface ListItemProps {
 }
 
 export default ({ item, activeId, index, longPressIndex, onBoundChange, onShowMenu }: ListItemProps) => {
-  const theme = useTheme()
   const buttonRef = useRef<BtnType>(null)
 
   const setPosition = useCallback(() => {
@@ -38,39 +41,34 @@ export default ({ item, activeId, index, longPressIndex, onBoundChange, onShowMe
   return (
     <Button
       ref={buttonRef}
-      style={{ ...styles.button, backgroundColor: index == longPressIndex ? theme['c-button-background-active'] : undefined }}
+      style={{ ...styles.button, backgroundColor: index == longPressIndex ? '#f2f2f2' : 'transparent' }}
       key={item.id} onLongPress={setPosition}
       onPress={() => { onBoundChange(item) }}
     >
-      {
-        active
-          ? <Icon style={styles.listActiveIcon} name="chevron-right" size={12} color={theme['c-primary-font']} />
-          : null
-      }
-      <Text style={styles.listName} size={14} textBreakStrategy="simple" color={active ? theme['c-primary-font-active'] : theme['c-font']} numberOfLines={1}>{item.name}</Text>
+      <View style={styles.iconWrap}>
+        { active ? <Icon name="chevron-right" size={12} color={HAMMER_RED} /> : null }
+      </View>
+      <Text style={styles.listName} size={14} textBreakStrategy="simple" color={active ? HAMMER_RED : HAMMER_TEXT} numberOfLines={1}>{item.name}</Text>
     </Button>
   )
 }
 
 const styles = createStyle({
   button: {
-    paddingLeft: 5,
+    paddingLeft: 8,
     paddingRight: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
+    height: 44,
     flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: HAMMER_LINE,
   },
-  listActiveIcon: {
-    // width: 18,
-    marginLeft: 3,
-    // paddingRight: 5,
-    textAlign: 'center',
+  iconWrap: {
+    width: 14,
   },
   listName: {
-    height: '100%',
-    justifyContent: 'center',
+    flexGrow: 1,
+    flexShrink: 1,
     paddingLeft: 6,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
   },
 })

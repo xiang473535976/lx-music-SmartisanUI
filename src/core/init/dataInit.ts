@@ -4,6 +4,7 @@ import { init as musicSdkInit } from '@/utils/musicSdk'
 import { getUserLists, setUserList } from '@/core/list'
 import { setNavActiveId } from '../common'
 import { getViewPrevState } from '@/utils/data'
+import { NAV_MENUS } from '@/config/constant'
 import { bootLog } from '@/utils/bootLog'
 import { getDislikeInfo, setDislikeInfo } from '@/core/dislikeList'
 import { unlink } from '@/utils/fs'
@@ -31,7 +32,10 @@ export default async(appSetting: LX.AppSetting) => {
   setUserList(await getUserLists()) // 获取用户列表
   setDislikeInfo(await getDislikeInfo()) // 获取不喜欢列表
   bootLog('User list inited.')
-  setNavActiveId((await getViewPrevState()).id)
+  // 恢复上次的页；若上次停在已不存在的页（例如本地音乐已改成独立页面），回落到搜索页
+  const prevState = await getViewPrevState()
+  const isValidId = NAV_MENUS.some(menu => menu.id == prevState.id)
+  setNavActiveId(isValidId ? prevState.id : 'nav_search')
   void unlink(TEMP_FILE_PATH)
   // await initPrevPlayInfo(appSetting).catch(err => log.error(err)) // 初始化上次的歌曲播放信息
 }

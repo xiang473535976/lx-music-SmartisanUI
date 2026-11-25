@@ -1,33 +1,44 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 
-// import { useGetter, useDispatch } from '@/store'
-// import Tag from './Tag'
-// import OpenList from './OpenList'
+import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
-// import { BorderWidths } from '@/theme'
 import SourceSelector, {
   type SourceSelectorType,
 } from './SourceSelector'
-import { useTheme } from '@/store/theme/hook'
-// import { BorderWidths } from '@/theme'
 import ActiveListName, { type ActiveListNameType } from './ActiveListName'
-import { BorderWidths } from '@/theme'
+import BoardsPopup, { type BoardsPopupType } from './BoardsPopup'
+import type { BoardItem } from '@/store/leaderboard/state'
+
+const HAMMER_TEXT = '#4d4d4d'
 
 export interface HeaderBarProps {
-  onShowBound: () => void
+  boards: BoardItem[]
+  activeBoardId: string
   onSourceChange: (source: LX.OnlineSource) => void
+  onBoundChange: (id: string) => void
+  onPlay: (id: string) => void
+  onCollect: (id: string, name: string) => void
 }
 
 export interface HeaderBarType {
   setBound: (source: LX.OnlineSource, id: string, name: string) => void
 }
 
-
-export default forwardRef<HeaderBarType, HeaderBarProps>(({ onShowBound, onSourceChange }, ref) => {
+/**
+ * 排行榜顶栏：左音源选择、中当前榜单名、右「更多」按钮（榜单列表收进底部弹层）。
+ */
+export default forwardRef<HeaderBarType, HeaderBarProps>(({
+  boards,
+  activeBoardId,
+  onSourceChange,
+  onBoundChange,
+  onPlay,
+  onCollect,
+}, ref) => {
   const activeListNameRef = useRef<ActiveListNameType>(null)
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
-  const theme = useTheme()
+  const boardsPopupRef = useRef<BoardsPopupType>(null)
 
   useImperativeHandle(ref, () => ({
     setBound(source, id, name) {
@@ -36,11 +47,25 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onShowBound, onSourc
     },
   }), [])
 
+  const showBoards = () => {
+    boardsPopupRef.current?.show()
+  }
 
   return (
-    <View style={{ ...styles.currentList, borderBottomColor: theme['c-border-background'] }}>
+    <View style={styles.currentList}>
       <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
-      <ActiveListName ref={activeListNameRef} onShowBound={onShowBound} />
+      <ActiveListName ref={activeListNameRef} onShowBound={showBoards} />
+      <TouchableOpacity style={styles.boardBtn} activeOpacity={0.6} onPress={showBoards}>
+        <Icon name="menu" size={18} color={HAMMER_TEXT} />
+      </TouchableOpacity>
+      <BoardsPopup
+        ref={boardsPopupRef}
+        boards={boards}
+        activeBoardId={activeBoardId}
+        onBoundChange={onBoundChange}
+        onPlay={onPlay}
+        onCollect={onCollect}
+      />
     </View>
   )
 })
@@ -50,10 +75,15 @@ const styles = createStyle({
     flexDirection: 'row',
     height: 38,
     zIndex: 2,
-    // paddingRight: 10,
-    borderBottomWidth: BorderWidths.normal,
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
   },
-  selector: {
-    width: 86,
+  boardBtn: {
+    width: 46,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })

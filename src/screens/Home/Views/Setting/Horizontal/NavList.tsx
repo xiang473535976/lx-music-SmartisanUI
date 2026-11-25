@@ -3,7 +3,6 @@ import { View, TouchableOpacity, FlatList, type FlatListProps } from 'react-nati
 
 import { Icon } from '@/components/common/Icon'
 
-import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
@@ -12,14 +11,13 @@ import { useI18n } from '@/lang'
 
 type FlatListType = FlatListProps<SettingScreenIds>
 
-const ITEM_HEIGHT = scaleSizeH(40)
+const ITEM_HEIGHT = scaleSizeH(44)
 
 const ListItem = memo(({ id, activeId, onPress }: {
   onPress: (item: SettingScreenIds) => void
   activeId: string
   id: SettingScreenIds
 }) => {
-  const theme = useTheme()
   const t = useI18n()
 
   const active = activeId == id
@@ -32,11 +30,11 @@ const ListItem = memo(({ id, activeId, onPress }: {
     <View style={{ ...styles.listItem, height: ITEM_HEIGHT }}>
       {
         active
-          ? <Icon style={styles.listActiveIcon} name="chevron-right" size={12} color={theme['c-primary-font']} />
+          ? <Icon style={styles.listActiveIcon} name="chevron-right" size={12} color={'#E64040'} />
           : null
       }
       <TouchableOpacity style={styles.listName} onPress={handlePress}>
-        <Text numberOfLines={1} size={16} color={active ? theme['c-primary-font'] : theme['c-font']}>{t(`setting_${id}`)}</Text>
+        <Text numberOfLines={1} size={16} color={active ? '#E64040' : '#4d4d4d'}>{t(`setting_${id}`)}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -107,7 +105,8 @@ const styles = createStyle({
     alignItems: 'center',
     paddingRight: 10,
     paddingLeft: 10,
-    // borderBottomWidth: BorderWidths.normal,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
   },
   listActiveIcon: {
     // width: 18,

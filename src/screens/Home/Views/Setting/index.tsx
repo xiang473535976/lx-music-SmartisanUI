@@ -1,23 +1,14 @@
 import { useHorizontalMode } from '@/utils/hooks'
 import Vertical from './Vertical'
 import Horizontal from './Horizontal'
-import { useBackHandler } from '@/utils/hooks/useBackHandler'
-import { useCallback } from 'react'
-// import { AppColors } from '@/theme'
-import commonState from '@/store/common/state'
-import { setNavActiveId } from '@/core/common'
 
 export type { SettingScreenIds } from './Main'
 
+// 设置已经是独立页面（由「我的」push 进入的 SettingScreen），
+// 返回操作交给 react-native-navigation 的 pop 处理，
+// 这里不能再挂 hardwareBackPress 去切首页 Tab —— 否则按返回键只会换 Tab，页面不退出。
 export default () => {
   const isHorizontalMode = useHorizontalMode()
-  useBackHandler(useCallback(() => {
-    if (Object.keys(commonState.componentIds).length == 1 && commonState.navActiveId == 'nav_setting') {
-      setNavActiveId(commonState.lastNavActiveId)
-      return true
-    }
-    return false
-  }, []))
 
   return isHorizontalMode
     ? <Horizontal />

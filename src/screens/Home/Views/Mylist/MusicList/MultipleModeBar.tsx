@@ -3,9 +3,7 @@ import { Animated, View, TouchableOpacity } from 'react-native'
 
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
-import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
-import { BorderWidths } from '@/theme'
 
 export type SelectMode = 'single' | 'range'
 
@@ -31,7 +29,6 @@ export default forwardRef<MultipleModeBarType, MultipleModeBarProps>(({ onSelect
   const [selectMode, setSelectMode] = useState<SelectMode>('single')
   const [isSelectAll, setIsSelectAll] = useState(false)
   const [visibleBar, setVisibleBar] = useState(true)
-  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -98,13 +95,13 @@ export default forwardRef<MultipleModeBarType, MultipleModeBarProps>(({ onSelect
 
   const animaStyle = useMemo(() => ({
     ...styles.container,
-    // backgroundColor: theme['c-content-background'],
-    borderBottomColor: theme['c-border-background'],
+    // backgroundColor: '#ffffff',
+    borderBottomColor: HAMMER_LINE,
     opacity: visibleBar ? animFade : 0, // Bind opacity to animated value
     transform: [
       { translateY: animTranslateY },
     ],
-  }), [animFade, animTranslateY, theme, visibleBar])
+  }), [animFade, animTranslateY, visibleBar])
 
   const handleSelectAll = useCallback(() => {
     const selectAll = !isSelectAll
@@ -116,25 +113,30 @@ export default forwardRef<MultipleModeBarType, MultipleModeBarProps>(({ onSelect
     return (
       <Animated.View style={animaStyle}>
         <View style={styles.switchBtn}>
-          <Button onPress={() => { onSwitchMode('single') }} style={{ ...styles.btn, backgroundColor: selectMode == 'single' ? theme['c-button-background'] : 'rgba(0,0,0,0)' }}>
-            <Text color={theme['c-button-font']}>{global.i18n.t('list_select_single')}</Text>
+          <Button onPress={() => { onSwitchMode('single') }} style={{ ...styles.btn, backgroundColor: selectMode == 'single' ? HAMMER_ACTIVE_BG : 'rgba(0,0,0,0)' }}>
+            <Text color={HAMMER_TEXT}>{global.i18n.t('list_select_single')}</Text>
           </Button>
-          <Button onPress={() => { onSwitchMode('range') }} style={{ ...styles.btn, backgroundColor: selectMode == 'range' ? theme['c-button-background'] : 'rgba(0,0,0,0)' }}>
-            <Text color={theme['c-button-font']}>{global.i18n.t('list_select_range')}</Text>
+          <Button onPress={() => { onSwitchMode('range') }} style={{ ...styles.btn, backgroundColor: selectMode == 'range' ? HAMMER_ACTIVE_BG : 'rgba(0,0,0,0)' }}>
+            <Text color={HAMMER_TEXT}>{global.i18n.t('list_select_range')}</Text>
           </Button>
         </View>
         <TouchableOpacity onPress={handleSelectAll} style={styles.btn}>
-          <Text color={theme['c-button-font']}>{global.i18n.t(isSelectAll ? 'list_select_unall' : 'list_select_all')}</Text>
+          <Text color={HAMMER_TEXT}>{global.i18n.t(isSelectAll ? 'list_select_unall' : 'list_select_all')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={onExitSelectMode} style={styles.btn}>
-          <Text color={theme['c-button-font']}>{global.i18n.t('list_select_cancel')}</Text>
+          <Text color={HAMMER_TEXT}>{global.i18n.t('list_select_cancel')}</Text>
         </TouchableOpacity>
       </Animated.View>
     )
-  }, [animaStyle, selectMode, theme, handleSelectAll, isSelectAll, onExitSelectMode, onSwitchMode])
+  }, [animaStyle, selectMode, handleSelectAll, isSelectAll, onExitSelectMode, onSwitchMode])
 
   return !visible && animatePlayed ? null : component
 })
+
+// 锤子风配色
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ededed'
+const HAMMER_ACTIVE_BG = '#cdcdcd'
 
 const styles = createStyle({
   container: {
@@ -145,7 +147,7 @@ const styles = createStyle({
     width: '100%',
     height: '100%',
     flexDirection: 'row',
-    borderBottomWidth: BorderWidths.normal,
+    borderBottomWidth: 0.5,
   },
   switchBtn: {
     flexDirection: 'row',

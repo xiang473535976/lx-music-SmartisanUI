@@ -42,9 +42,11 @@ export default memo(() => {
 
 const styles = StyleSheet.create({
   ruleNum: {
-    marginBottom: 5,
+    marginBottom: 8,
   },
   btn: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 4,
   },
 })

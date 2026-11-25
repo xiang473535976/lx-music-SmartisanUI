@@ -4,10 +4,10 @@ import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native
 // import { useMusicList } from '@/store/list/hook'
 import CommentFloor from './CommentFloor'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { type Comment } from '../utils'
 import { useI18n } from '@/lang'
 import Text from '@/components/common/Text'
+import EmptyView from '@/components/common/EmptyView'
 
 type FlatListType = FlatListProps<Comment>
 
@@ -26,8 +26,7 @@ const List = forwardRef<ListType, ListProps>(({
   onRefresh,
   onLoadMore,
 }, ref) => {
-  // const t = useI18n()
-  const theme = useTheme()
+  const t = useI18n()
   const flatListRef = useRef<FlatList>(null)
   const [currentList, setList] = useState<Comment[]>([])
   const [status, setStatus] = useState<Status>('idle')
@@ -57,11 +56,11 @@ const List = forwardRef<ListType, ListProps>(({
 
   const refreshControl = useMemo(() => (
     <RefreshControl
-      colors={[theme['c-primary']]}
-      // progressBackgroundColor={theme.primary}
+      colors={['#E64040']}
+      // progressBackgroundColor={'#E64040'}
       refreshing={status == 'refreshing'}
       onRefresh={onRefresh} />
-  ), [status, onRefresh, theme])
+  ), [status, onRefresh])
   const footerComponent = useMemo(() => {
     let label: FooterLabel
     switch (status) {
@@ -100,6 +99,7 @@ const List = forwardRef<ListType, ListProps>(({
       onEndReached={handleLoadMore}
       refreshControl={refreshControl}
       ListFooterComponent={footerComponent}
+      ListEmptyComponent={status == 'end' ? <EmptyView text={t('no_item')} icon={null} /> : null}
     />
   )
 })
@@ -109,7 +109,6 @@ const Footer = ({ label, onLoadMore }: {
   label: FooterLabel
   onLoadMore: () => void
 }) => {
-  const theme = useTheme()
   const t = useI18n()
   const handlePress = () => {
     if (label != 'list_error') return
@@ -119,7 +118,7 @@ const Footer = ({ label, onLoadMore }: {
     label
       ? (
           <View>
-            <Text onPress={handlePress} style={styles.footer} color={theme['c-font-label']}>{t(label)}</Text>
+            <Text onPress={handlePress} style={styles.footer} color={'#939396'}>{t(label)}</Text>
           </View>
         )
       : null
@@ -133,8 +132,9 @@ const styles = createStyle({
   list: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingLeft: 14,
+    paddingRight: 14,
+    backgroundColor: '#ffffff',
   },
   footer: {
     textAlign: 'center',

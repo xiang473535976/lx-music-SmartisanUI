@@ -4,7 +4,6 @@ import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
 import { getExternalStoragePaths, stat } from '@/utils/fs'
-import { useTheme } from '@/store/theme/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { useStatusbarHeight } from '@/store/common/hook'
 import NewFolderModal, { type NewFolderType } from './NewFolderModal'
@@ -23,7 +22,6 @@ export default memo(({
   onRefreshDir: (dir: string) => Promise<PathItem[]>
   onOpenDir: (dir: string) => Promise<PathItem[]>
 }) => {
-  const theme = useTheme()
   const newFolderTypeRef = useRef<NewFolderType>(null)
   const openDirModalTypeRef = useRef<OpenDirModalType>(null)
   const storagePathsRef = useRef<string[]>([])
@@ -63,21 +61,21 @@ export default memo(({
         ...styles.header,
         height: scaleSizeH(50) + statusBarHeight,
         paddingTop: statusBarHeight,
-        backgroundColor: theme['c-content-background'],
+        backgroundColor: '#ffffff',
       }} onStartShouldSetResponder={() => true}>
         <View style={styles.titleContent}>
-          <Text color={theme['c-primary-font']} numberOfLines={1}>{title}</Text>
-          <Text style={styles.subTitle} color={theme['c-primary-font']} size={13} numberOfLines={1}>{path}</Text>
+          <Text color={'#E64040'} numberOfLines={1}>{title}</Text>
+          <Text style={styles.subTitle} color={'#E64040'} size={13} numberOfLines={1}>{path}</Text>
         </View>
         <View style={styles.actions}>
           <TouchableOpacity style={styles.actionBtn} onPress={openStorage}>
-            <Icon name="sd-card" color={theme['c-primary-font']} size={22} />
+            <Icon name="sd-card" color={'#E64040'} size={22} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={handleShowNewFolderModal}>
-            <Icon name="add_folder" color={theme['c-primary-font']} size={22} />
+            <Icon name="add_folder" color={'#E64040'} size={22} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={refresh}>
-            <Icon name="available_updates" color={theme['c-primary-font']} size={22} />
+            <Icon name="available_updates" color={'#E64040'} size={22} />
           </TouchableOpacity>
         </View>
       </View>
@@ -92,12 +90,12 @@ const styles = createStyle({
     flexGrow: 0,
     flexShrink: 0,
     flexDirection: 'row',
-    paddingLeft: 15,
-    paddingRight: 15,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
+    paddingLeft: 14,
+    paddingRight: 14,
     alignItems: 'center',
-    elevation: 2,
     zIndex: 2,
-    // borderBottomWidth: BorderWidths.normal,
   },
   titleContent: {
     flexGrow: 1,

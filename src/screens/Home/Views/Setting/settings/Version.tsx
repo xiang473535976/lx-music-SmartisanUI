@@ -83,9 +83,10 @@ export default memo(() => {
 
 const styles = StyleSheet.create({
   desc: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
   btn: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 })

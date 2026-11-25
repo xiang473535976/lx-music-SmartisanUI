@@ -5,8 +5,11 @@ import Button from '@/components/common/Button'
 import { getList } from '@/core/hotSearch'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
+
+const SECTION_TITLE = '#5b5b5b'
+const CHIP_BG = '#f4f4f4'
+const CHIP_TEXT = '#4d4d4d'
 
 
 interface ListProps {
@@ -23,10 +26,9 @@ const ListItem = ({ keyword, onSearch }: {
   keyword: string
   onSearch: (keyword: string) => void
 }) => {
-  const theme = useTheme()
   return (
-    <Button style={{ ...styles.button, backgroundColor: theme['c-button-background'] }} onPress={() => { onSearch(keyword) }}>
-      <Text color={theme['c-button-font']} size={13}>{keyword}</Text>
+    <Button style={styles.button} onPress={() => { onSearch(keyword) }}>
+      <Text color={CHIP_TEXT} size={13}>{keyword}</Text>
     </Button>
   )
 }
@@ -36,7 +38,6 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
   // const listRef = useRef<MusicListType>(null)
   const [list, setList] = useState<List>([])
   const t = useI18n()
-  // const theme = useTheme()
 
   const isUnmountedRef = useRef(false)
   useEffect(() => {
@@ -59,11 +60,15 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
     list.length
       ? (
           <ScrollView>
-            <Text style={styles.title} size={16}>{t('search_hot_search')}</Text>
-            <View style={styles.list}>
-              {
-                list.map(keyword => <ListItem keyword={keyword} key={keyword} onSearch={props.onSearch} />)
-              }
+            <View style={styles.titleBar}>
+              <Text style={styles.title} size={13} color={SECTION_TITLE}>{t('search_hot_search')}</Text>
+            </View>
+            <View style={styles.listWrap}>
+              <View style={styles.list}>
+                {
+                  list.map(keyword => <ListItem keyword={keyword} key={keyword} onSearch={props.onSearch} />)
+                }
+              </View>
             </View>
           </ScrollView>
         )
@@ -73,17 +78,30 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
 
 
 const styles = createStyle({
+  titleBar: {
+    height: 26,
+    justifyContent: 'center',
+    paddingLeft: 14,
+    paddingRight: 14,
+    marginLeft: -14,
+    marginRight: -14,
+    backgroundColor: '#ededed',
+  },
   title: {
-    // paddingLeft: 15,
-    paddingTop: 15,
-    // paddingBottom: 10,
+    fontWeight: 'bold',
+  },
+  listWrap: {
+    backgroundColor: '#ffffff',
+    marginLeft: -14,
+    marginRight: -14,
+    paddingLeft: 14,
+    paddingRight: 14,
+    paddingTop: 4,
+    paddingBottom: 14,
   },
   list: {
-    // paddingLeft: 15,
-    // paddingRight: 15,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // paddingBottom: 15,
   },
   button: {
     textAlign: 'center',
@@ -94,5 +112,6 @@ const styles = createStyle({
     borderRadius: 4,
     marginRight: 10,
     marginTop: 8,
+    backgroundColor: CHIP_BG,
   },
 })

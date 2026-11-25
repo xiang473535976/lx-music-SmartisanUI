@@ -1,60 +1,39 @@
 import { memo, useMemo } from 'react'
 
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 
 import SubTitle from '../../components/SubTitle'
-import CheckBox from '@/components/common/CheckBox'
+import ChoiceBar from '../../components/ChoiceBar'
 import { useSettingValue } from '@/store/setting/hook'
 import { useI18n } from '@/lang'
 import { updateSetting } from '@/core/common'
 
-const LIST = [
-  {
-    position: 'left',
-    name: 'setting_basic_drawer_layout_position_left',
-  },
-  {
-    position: 'right',
-    name: 'setting_basic_drawer_layout_position_right',
-  },
-] as const
-
-const useActive = (id: LX.AppSetting['common.drawerLayoutPosition']) => {
-  const drawerLayoutPosition = useSettingValue('common.drawerLayoutPosition')
-  const isActive = useMemo(() => drawerLayoutPosition == id, [drawerLayoutPosition, id])
-  return isActive
-}
-
-const Item = ({ position, label }: {
-  position: LX.AppSetting['common.drawerLayoutPosition']
-  label: string
-}) => {
-  const isActive = useActive(position)
-  // const [toggleCheckBox, setToggleCheckBox] = useState(false)
-  return <CheckBox marginRight={8} check={isActive} label={label} onChange={() => { updateSetting({ 'common.drawerLayoutPosition': position }) }} need />
-}
-
 export default memo(() => {
   const t = useI18n()
+  const drawerLayoutPosition = useSettingValue('common.drawerLayoutPosition')
 
-  const list = useMemo(() => {
-    return LIST.map((item) => ({ position: item.position, name: t(item.name) }))
+  const options = useMemo(() => {
+    return [
+      {
+        id: 'left',
+        label: t('setting_basic_drawer_layout_position_left'),
+      },
+      {
+        id: 'right',
+        label: t('setting_basic_drawer_layout_position_right'),
+      },
+    ]
   }, [t])
 
   return (
     <SubTitle title={t('setting_basic_drawer_layout_position')}>
-      <View style={styles.list}>
-        {
-          list.map(({ position, name }) => <Item key={position} position={position} label={name} />)
-        }
+      <View>
+        <ChoiceBar
+          options={options}
+          activeId={drawerLayoutPosition}
+          onChange={id => { updateSetting({ 'common.drawerLayoutPosition': id as LX.AppSetting['common.drawerLayoutPosition'] }) }}
+        />
       </View>
     </SubTitle>
   )
-})
-
-const styles = StyleSheet.create({
-  list: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
 })

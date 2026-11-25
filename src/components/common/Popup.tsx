@@ -5,9 +5,13 @@ import Modal, { type ModalType } from './Modal'
 import { Icon } from '@/components/common/Icon'
 import { useKeyboard } from '@/utils/hooks'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { useStatusbarHeight } from '@/store/common/hook'
+
+// 锤子风弹层配色
+const POPUP_BG = '#ffffff'
+const POPUP_TITLE = '#5b5b5b'
+const POPUP_CLOSE = '#939396'
 
 const styles = createStyle({
   centeredView: {
@@ -39,7 +43,7 @@ const styles = createStyle({
     // borderTopRightRadius: 8,
     flexGrow: 0,
     flexShrink: 0,
-    height: 30,
+    height: 26,
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -70,7 +74,6 @@ export default forwardRef<PopupType, PopupProps>(({
   title = '',
   children,
 }: PopupProps, ref) => {
-  const theme = useTheme()
   const { keyboardShown, keyboardHeight } = useKeyboard()
   const statusBarHeight = useStatusbarHeight()
 
@@ -84,9 +87,9 @@ export default forwardRef<PopupType, PopupProps>(({
 
   const closeBtnComponent = useMemo(() => closeBtn
     ? <TouchableOpacity style={styles.closeBtn} onPress={() => modalRef.current?.setVisible(false)}>
-        <Icon name="close" style={{ color: theme['c-font-label'] }} size={12} />
+        <Icon name="close" style={{ color: POPUP_CLOSE }} size={12} />
       </TouchableOpacity>
-    : null, [closeBtn, theme])
+    : null, [closeBtn])
 
   const [centeredViewStyle, modalViewStyle] = useMemo(() => {
     switch (position) {
@@ -103,7 +106,7 @@ export default forwardRef<PopupType, PopupProps>(({
           {
             width: '100%',
             maxHeight: '78%',
-            minHeight: '20%',
+            minHeight: 0,
             // backgroundColor: 'white',
           },
         ] as const
@@ -159,7 +162,7 @@ export default forwardRef<PopupType, PopupProps>(({
           {
             width: '100%',
             maxHeight: '78%',
-            minHeight: '20%',
+            minHeight: 0,
             // backgroundColor: 'white',
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
@@ -171,9 +174,9 @@ export default forwardRef<PopupType, PopupProps>(({
   return (
     <Modal onHide={onHide} keyHide={keyHide} bgHide={bgHide} bgColor="rgba(50,50,50,.2)" ref={modalRef}>
       <View style={{ ...styles.centeredView, ...centeredViewStyle, paddingBottom: keyboardShown ? keyboardHeight : 0 }}>
-        <View style={{ ...styles.modalView, ...modalViewStyle, backgroundColor: theme['c-content-background'] }} onStartShouldSetResponder={() => true}>
+        <View style={{ ...styles.modalView, ...modalViewStyle, backgroundColor: POPUP_BG }} onStartShouldSetResponder={() => true}>
           <View style={styles.header}>
-            <Text size={13} style={styles.title} numberOfLines={1}>{title}</Text>
+            <Text size={13} color={POPUP_TITLE} style={styles.title} numberOfLines={1}>{title}</Text>
             {closeBtnComponent}
           </View>
           {children}

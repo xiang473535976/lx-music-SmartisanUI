@@ -1,5 +1,4 @@
 import { useI18n } from '@/lang'
-import { useTheme } from '@/store/theme/hook'
 import { createStyle, getRowInfo } from '@/utils/tools'
 import { useEffect, useMemo, useRef } from 'react'
 import { View, FlatList } from 'react-native'
@@ -15,13 +14,12 @@ export default ({ list, loading, onSetPath, toParentDir }: {
   toParentDir: () => void
 }) => {
   const t = useI18n()
-  const theme = useTheme()
   const loadingMaskRef = useRef<LoadingMaskType>(null)
   const rowInfo = useRef(getRowInfo('full'))
   const fullRow = useRef({ rowNum: undefined, rowWidth: '100%' } as const)
 
   const ParentItemComponent = useMemo(() => (
-    <View style={{ backgroundColor: theme['c-primary-light-700-alpha-900'] }}>
+    <View style={{ backgroundColor: '#ffffff' }}>
       <ListItem item={{
         name: '..',
         desc: t('parent_dir_name'),
@@ -29,7 +27,7 @@ export default ({ list, loading, onSetPath, toParentDir }: {
         path: '',
       }} rowInfo={fullRow.current} onPress={toParentDir} />
     </View>
-  ), [t, theme, toParentDir])
+  ), [t, toParentDir])
 
   useEffect(() => {
     loadingMaskRef.current?.setVisible(loading)
@@ -68,6 +66,7 @@ const styles = createStyle({
   list: {
     flexGrow: 1,
     flexShrink: 1,
+    backgroundColor: '#ffffff',
   },
 })
 

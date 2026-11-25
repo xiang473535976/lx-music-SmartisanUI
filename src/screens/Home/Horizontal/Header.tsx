@@ -43,7 +43,7 @@ const LeftHeader = () => {
       {headerComponents[id] ?? null}
 
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
-        <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
+        <Icon style={{ ...styles.btnText, color: '#4d4d4d' }} name="setting" size={styles.btnText.fontSize} />
       </TouchableOpacity> */}
     </View>
   )
@@ -72,7 +72,7 @@ const RightHeader = () => {
       </View>
       {headerComponents[id] ?? null}
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
-        <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
+        <Icon style={{ ...styles.btnText, color: '#4d4d4d' }} name="setting" size={styles.btnText.fontSize} />
       </TouchableOpacity> */}
     </View>
   )

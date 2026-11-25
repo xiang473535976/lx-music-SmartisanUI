@@ -5,7 +5,6 @@ import { View } from 'react-native'
 import Input, { type InputType } from '@/components/common/Input'
 import { createUserList, updateUserList } from '@/core/list'
 import { confirmDialog, createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import listState from '@/store/list/state'
 
 interface NameInputType {
@@ -14,7 +13,6 @@ interface NameInputType {
   focus: () => void
 }
 const NameInput = forwardRef<NameInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const [text, setText] = useState('')
   const [placeholder, setPlaceholder] = useState('')
   const inputRef = useRef<InputType>(null)
@@ -38,7 +36,7 @@ const NameInput = forwardRef<NameInputType, {}>((props, ref) => {
       placeholder={placeholder}
       value={text}
       onChangeText={setText}
-      style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+      style={{ ...styles.input, backgroundColor: '#ffffff' }}
     />
   )
 })

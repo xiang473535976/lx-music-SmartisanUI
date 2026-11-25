@@ -1,12 +1,10 @@
 import { memo, useCallback, useState } from 'react'
 import { View, TouchableOpacity, ScrollView } from 'react-native'
 
-import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { SETTING_SCREENS, type SettingScreenIds } from '../Main'
 import { useI18n } from '@/lang'
-import { BorderRadius, BorderWidths } from '@/theme'
 
 
 const ListItem = memo(({ id, activeId, onPress }: {
@@ -14,7 +12,6 @@ const ListItem = memo(({ id, activeId, onPress }: {
   activeId: string
   id: SettingScreenIds
 }) => {
-  const theme = useTheme()
   const t = useI18n()
 
   const active = activeId == id
@@ -24,9 +21,9 @@ const ListItem = memo(({ id, activeId, onPress }: {
   }
 
   return (
-    <View style={{ ...styles.listItem, backgroundColor: active ? theme['c-primary-background-active'] : 'transparent' }}>
+    <View style={{ ...styles.listItem, backgroundColor: active ? '#f2f2f2' : 'transparent' }}>
       <TouchableOpacity style={styles.listName} onPress={handlePress}>
-        <Text numberOfLines={1} color={active ? theme['c-primary-font'] : theme['c-font']}>{t(`setting_${id}`)}</Text>
+        <Text numberOfLines={1} color={active ? '#E64040' : '#4d4d4d'}>{t(`setting_${id}`)}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -42,7 +39,6 @@ export default ({ onChangeId }: {
   onChangeId: (id: SettingScreenIds) => void
 }) => {
   const [activeId, setActiveId] = useState(global.lx.settingActiveId)
-  const theme = useTheme()
 
   const handleChangeId = useCallback((id: SettingScreenIds) => {
     onChangeId(id)
@@ -52,7 +48,7 @@ export default ({ onChangeId }: {
   }, [])
 
   return (
-    <ScrollView horizontal style={{ ...styles.container, borderBottomColor: theme['c-border-background'] }} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps={'always'}>
+    <ScrollView horizontal style={{ ...styles.container, borderBottomColor: '#ededed' }} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps={'always'}>
       {
         SETTING_SCREENS.map(id => <ListItem key={id} id={id} activeId={activeId} onPress={handleChangeId} />)
       }
@@ -66,7 +62,7 @@ const styles = createStyle({
     height: 50,
     flexGrow: 0,
     flexShrink: 0,
-    borderBottomWidth: BorderWidths.normal,
+    borderBottomWidth: 0.5,
     opacity: 0.7,
   },
   contentContainer: {
@@ -76,7 +72,7 @@ const styles = createStyle({
     // backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   // listContainer: {
-  //   // borderBottomWidth: BorderWidths.normal2,
+  //   // borderBottomWidth: 0.5,
   // },
 
   listItem: {
@@ -89,7 +85,7 @@ const styles = createStyle({
     // alignItems: 'center',
     paddingHorizontal: 5,
     // paddingVertical: 10,
-    borderRadius: BorderRadius.normal,
+    borderRadius: 4,
     marginBottom: 5,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },

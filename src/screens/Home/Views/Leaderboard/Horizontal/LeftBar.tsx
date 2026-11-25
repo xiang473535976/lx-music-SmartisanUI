@@ -1,16 +1,14 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { View } from 'react-native'
 
 import SourceSelector, {
   type SourceSelectorType as _SourceSelectorType,
   // type SourceSelectorProps as _SourceSelectorProps,
 } from '@/components/SourceSelector'
-import BoardsList, { type BoardsListType, type BoardsListProps } from '../BoardsList'
-import { BorderWidths } from '@/theme'
+import BoardsList, { type BoardsListProps } from '../BoardsList'
 import { createStyle } from '@/utils/tools'
 import { handleCollect, handlePlay } from '../listAction'
-import boardState, { type InitState } from '@/store/leaderboard/state'
-import { useTheme } from '@/store/theme/hook'
+import boardState, { type BoardItem, type InitState } from '@/store/leaderboard/state'
 import { getBoardsList } from '@/core/leaderboard'
 
 type Sources = Readonly<InitState['sources']>
@@ -26,16 +24,18 @@ export interface LeftBarType {
 }
 
 export default forwardRef<LeftBarType, LeftBarProps>(({ onChangeList }, ref) => {
-  const theme = useTheme()
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
-  const boardsListRef = useRef<BoardsListType>(null)
   const boundInfo = useRef<{ source: LX.OnlineSource, id: string | null }>({ source: 'kw', id: null })
+  const [boards, setBoards] = useState<BoardItem[]>([])
+  const [activeBoardId, setActiveBoardId] = useState('')
+
   useImperativeHandle(ref, () => ({
     setBound(source, listId) {
       boundInfo.current = { source, id: listId }
       sourceSelectorRef.current?.setSourceList(boardState.sources, source)
+      setActiveBoardId(listId)
       void getBoardsList(source).then(list => {
-        boardsListRef.current?.setList(list, listId)
+        setBoards(list)
       })
     },
   }), [])
@@ -44,17 +44,17 @@ export default forwardRef<LeftBarType, LeftBarProps>(({ onChangeList }, ref) => 
   const onSourceChange = (source: LX.OnlineSource) => {
     boundInfo.current.source = source
     void getBoardsList(source).then(list => {
+      if (!list.length) return
       const id = list[0].id
-      requestAnimationFrame(() => {
-        boardsListRef.current?.setList(list, id)
-        requestAnimationFrame(() => {
-          onChangeList(source, id)
-        })
-      })
+      boundInfo.current.id = id
+      setBoards(list)
+      setActiveBoardId(id)
+      onChangeList(source, id)
     })
   }
   const onBoundChange: BoardsListProps['onBoundChange'] = (id) => {
     boundInfo.current.id = id
+    setActiveBoardId(id)
     onChangeList(boundInfo.current.source, id)
   }
   const onPlay: BoardsListProps['onPlay'] = (id) => {
@@ -67,12 +67,13 @@ export default forwardRef<LeftBarType, LeftBarProps>(({ onChangeList }, ref) => 
   }
 
   return (
-    <View style={{ ...styles.container, borderRightColor: theme['c-list-header-border-bottom'] }}>
+    <View style={{ ...styles.container, borderRightColor: '#ededed' }}>
       <View style={styles.selector}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
       <BoardsList
-        ref={boardsListRef}
+        list={boards}
+        activeId={activeBoardId}
         onBoundChange={onBoundChange}
         onPlay={onPlay}
         onCollect={onCollect}
@@ -89,10 +90,9 @@ const styles = createStyle({
     minWidth: 110,
     flexGrow: 0,
     flexShrink: 0,
-    borderRightWidth: BorderWidths.normal,
+    borderRightWidth: 0.5,
   },
   selector: {
     height: 38,
   },
 })
-

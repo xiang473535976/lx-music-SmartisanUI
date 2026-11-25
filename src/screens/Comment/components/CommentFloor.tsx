@@ -1,9 +1,7 @@
 import { memo, useState, useMemo, useCallback } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { BorderWidths } from '@/theme'
 import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { type Comment } from '../utils'
 import Text from '@/components/common/Text'
 import { scaleSizeW } from '@/utils/pixelRatio'
@@ -17,12 +15,14 @@ const defaultUser = require('@/resources/images/defaultUser.jpg')
 
 const GAP = 12
 const avatarWidth = scaleSizeW(36)
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_SUB = '#939396'
+const HAMMER_LINE = '#ededed'
 
 const CommentFloor = memo(({ comment, isLast }: {
   comment: Comment
   isLast?: boolean
 }) => {
-  const theme = useTheme()
   const [isAvatarError, setIsAvatarError] = useState(false)
   const { onLayout, width } = useLayout()
   const t = useI18n()
@@ -35,7 +35,7 @@ const CommentFloor = memo(({ comment, isLast }: {
     if (!comment.reply?.length) return null
     const endIndex = comment.reply.length - 1
     return (
-      <View style={{ ...styles.replyFloor, borderTopColor: theme['c-list-header-border-bottom'] }}>
+      <View style={{ ...styles.replyFloor, borderTopColor: HAMMER_LINE }}>
         {
           comment.reply.map((c, index) => (
             <CommentFloor comment={c} isLast={index === endIndex} key={`${comment.id}_${c.id}`} />
@@ -51,15 +51,15 @@ const CommentFloor = memo(({ comment, isLast }: {
     if (comment.likedCount == null) return null
     return (
       <View style={styles.like}>
-        <Icon name="thumbs-up" style={{ color: theme['c-450'] }} size={12} />
-        <Text style={styles.likedCount} size={12} color={ theme['c-450'] }>{comment.likedCount}</Text>
+        <Icon name="thumbs-up" style={{ color: HAMMER_SUB }} size={12} />
+        <Text style={styles.likedCount} size={12} color={ HAMMER_SUB }>{comment.likedCount}</Text>
       </View>
     )
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <View style={{ ...styles.container, borderBottomColor: theme['c-list-header-border-bottom'], borderBottomWidth: isLast ? 0 : BorderWidths.normal, paddingBottom: isLast ? 0 : GAP }}>
+    <View style={{ ...styles.container, borderBottomColor: HAMMER_LINE, borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth, paddingBottom: isLast ? 0 : GAP }}>
       <View style={styles.comment}>
         <View>
           <Image
@@ -74,8 +74,8 @@ const CommentFloor = memo(({ comment, isLast }: {
                 {comment.userName}
               </Text>
               <View style={styles.metaInfo}>
-                <Text numberOfLines={1} size={12} color={theme['c-450']}>{comment.timeStr}</Text>
-                { comment.location ? <Text numberOfLines={1} style={styles.location} size={12} color={theme['c-450']}>{t('location', { location: comment.location })}</Text> : null }
+                <Text numberOfLines={1} size={12} color={HAMMER_SUB}>{comment.timeStr}</Text>
+                { comment.location ? <Text numberOfLines={1} style={styles.location} size={12} color={HAMMER_SUB}>{t('location', { location: comment.location })}</Text> : null }
               </View>
             </View>
             {likedCount}
@@ -102,11 +102,10 @@ const CommentFloor = memo(({ comment, isLast }: {
 const styles = createStyle({
   container: {
     flex: 1,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
     marginTop: GAP,
     paddingBottom: GAP,
-    borderBottomWidth: BorderWidths.normal,
-    borderStyle: 'dashed',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderStyle: 'solid',
   },
   comment: {
     flex: 1,
@@ -146,9 +145,7 @@ const styles = createStyle({
   replyFloor: {
     marginTop: GAP,
     marginLeft: 20,
-    borderTopWidth: BorderWidths.normal,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-    borderStyle: 'dashed',
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
 })
 

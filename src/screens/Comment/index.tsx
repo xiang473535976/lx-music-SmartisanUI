@@ -6,7 +6,6 @@ import { Icon } from '@/components/common/Icon'
 import CommentHot from './CommentHot'
 import CommentNew from './CommentNew'
 import { createStyle, toast } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import { COMPONENT_IDS } from '@/config/constant'
@@ -14,7 +13,6 @@ import { setComponentId } from '@/core/common'
 import PageContent from '@/components/PageContent'
 import playerState from '@/store/player/state'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { BorderWidths } from '@/theme'
 
 type ActiveId = 'hot' | 'new'
 
@@ -26,15 +24,12 @@ const HeaderItem = ({ id, label, isActive, onPress }: {
   isActive: boolean
   onPress: (id: ActiveId) => void
 }) => {
-  const theme = useTheme()
-  // console.log(theme)
-  const components = useMemo(() => (
-    <TouchableOpacity style={styles.tabBtn} onPress={() => { !isActive && onPress(id) }}>
-      <Text color={isActive ? theme['c-primary-font-active'] : theme['c-font']}>{label}</Text>
+  return useMemo(() => (
+    <TouchableOpacity style={{ ...styles.tabBtn, backgroundColor: isActive ? '#cdcdcd' : 'transparent' }} onPress={() => { !isActive && onPress(id) }} activeOpacity={0.6}>
+      <Text size={14} color={isActive ? '#ffffff' : '#4d4d4d'} style={isActive ? styles.tabTextActive : undefined}>{label}</Text>
     </TouchableOpacity>
-  ), [isActive, theme, label, onPress, id])
-
-  return components
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [isActive, label, onPress, id])
 }
 
 const HotCommentPage = memo(({ activeId, musicInfo, onUpdateTotal }: {
@@ -84,7 +79,6 @@ export default memo(({ componentId }: {
   const [activeId, setActiveId] = useState<ActiveId>('hot')
   const [musicInfo, setMusicInfo] = useState<LX.Music.MusicInfo | null>(getMusicInfo(playerState.playMusicInfo.musicInfo))
   const t = useI18n()
-  const theme = useTheme()
   const [total, setTotal] = useState({ hot: 0, new: 0 })
 
   useEffect(() => {
@@ -130,13 +124,13 @@ export default memo(({ componentId }: {
   const commentComponent = useMemo(() => {
     return (
       <View style={styles.container}>
-        <View style={{ ...styles.tabHeader, borderBottomColor: theme['c-border-background'], height: BAR_HEIGHT }}>
+        <View style={{ ...styles.tabHeader, height: BAR_HEIGHT }}>
           <View style={styles.left}>
             {tabs.map(({ id, label }) => <HeaderItem id={id} label={label} key={id} isActive={activeId == id} onPress={toggleTab} />)}
           </View>
           <View>
-            <TouchableOpacity onPress={refreshComment} style={{ ...styles.btn, width: BAR_HEIGHT }}>
-              <Icon name="available_updates" size={20} color={theme['c-600']} />
+            <TouchableOpacity onPress={refreshComment} style={{ ...styles.btn, width: BAR_HEIGHT }} activeOpacity={0.6}>
+              <Icon name="available_updates" size={18} color="#939396" />
             </TouchableOpacity>
           </View>
         </View>
@@ -155,7 +149,7 @@ export default memo(({ componentId }: {
         </PagerView>
       </View>
     )
-  }, [activeId, musicInfo, onPageSelected, refreshComment, setHotTotal, setNewTotal, tabs, theme, toggleTab])
+  }, [activeId, musicInfo, onPageSelected, refreshComment, setHotTotal, setNewTotal, tabs, toggleTab])
 
   return (
     <PageContent>
@@ -186,23 +180,25 @@ const styles = createStyle({
   },
   tabHeader: {
     flexDirection: 'row',
-    // paddingLeft: 10,
     paddingRight: 10,
-    // justifyContent: 'center',
-    borderBottomWidth: BorderWidths.normal,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
   },
   left: {
     flex: 1,
     flexDirection: 'row',
-    paddingLeft: 5,
+    paddingLeft: 0,
   },
   tabBtn: {
-    // flex: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 14,
+    paddingRight: 14,
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
+  },
+  tabTextActive: {
+    fontWeight: 'bold',
   },
   btn: {
     // flex: 1,

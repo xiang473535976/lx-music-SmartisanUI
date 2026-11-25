@@ -80,6 +80,30 @@ export default {
 
     global.state_event.playPlayedListChanged({ ...state.playedList })
   },
+  addPlayHistory(info: LX.Player.PlayMusicInfo) {
+    const index = state.playHistory.findIndex(m => m.musicInfo.id == info.musicInfo.id)
+    if (index > -1) state.playHistory.splice(index, 1)
+    state.playHistory.push(info)
+    // 只保留最近 500 首
+    if (state.playHistory.length > 500) state.playHistory.splice(0, state.playHistory.length - 500)
+
+    global.state_event.playHistoryChanged([...state.playHistory])
+  },
+  setPlayHistory(list: LX.Player.PlayMusicInfo[]) {
+    state.playHistory = list
+
+    global.state_event.playHistoryChanged([...state.playHistory])
+  },
+  removePlayHistory(index: number) {
+    state.playHistory.splice(index, 1)
+
+    global.state_event.playHistoryChanged([...state.playHistory])
+  },
+  clearPlayHistory() {
+    state.playHistory = []
+
+    global.state_event.playHistoryChanged([...state.playHistory])
+  },
   addTempPlayList(list: LX.Player.TempPlayListItem[]) {
     const topList: Array<{ listId: string | null, musicInfo: LX.Music.MusicInfo | LX.Download.ListItem }> = []
     const bottomList = list.filter(({ isTop, ...musicInfo }) => {

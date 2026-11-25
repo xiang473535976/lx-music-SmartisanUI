@@ -3,22 +3,23 @@ import { View, ScrollView } from 'react-native'
 
 import Button from '@/components/common/Button'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import ModalContent from './ModalContent'
 import syncState from '@/store/sync/state'
-import CheckBox from '@/components/common/CheckBox'
+import CheckRow from '@/components/common/CheckRow'
 import { setSyncModeComponentId } from '@/core/sync'
 
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_SUB = '#939396'
+const HAMMER_LINE = '#ccdcdbdb'
+const HAMMER_TITLE = '#333333'
 
 const styles = createStyle({
   main: {
-    // flexGrow: 0,
     flexShrink: 1,
     marginTop: 15,
     marginLeft: 15,
-    // marginRight: 15,
     marginBottom: 15,
   },
   content: {
@@ -26,32 +27,34 @@ const styles = createStyle({
   },
   title: {
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
     marginRight: 15,
+    fontWeight: 'bold',
   },
   btnGroup: {
-    marginTop: 10,
+    marginTop: 12,
   },
   btns: {
     flexDirection: 'row',
-    // justifyContent: 'center',
     justifyContent: 'flex-start',
-    marginTop: 5,
+    marginTop: 8,
     marginBottom: 5,
-    // paddingBottom: 15,
-    // paddingLeft: 15,
-    // paddingRight: 15,
   },
   btn: {
-    // flex: 1,
-    paddingTop: 9,
-    paddingBottom: 9,
-    paddingLeft: 8,
-    paddingRight: 8,
+    height: 32,
+    paddingLeft: 12,
+    paddingRight: 12,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 4,
-    marginRight: 15,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
+    backgroundColor: '#ffffff',
+    marginRight: 12,
     minWidth: 100,
+  },
+  btnText: {
+    fontWeight: 'bold',
   },
   tips: {
     paddingLeft: 15,
@@ -62,15 +65,13 @@ const styles = createStyle({
     fontWeight: 'bold',
   },
   tip: {
-    // paddingLeft: 15,
-    // paddingRight: 15,
-    paddingBottom: 5,
+    paddingBottom: 6,
+    lineHeight: 18,
   },
 })
 
 
 const ListModeModal = () => {
-  const theme = useTheme()
   const t = useI18n()
   const [isOverwrite, setOverwrite] = useState(false)
 
@@ -82,53 +83,53 @@ const ListModeModal = () => {
   return (
     <>
       <View style={styles.main}>
-        <Text style={styles.title} size={16}>{t('sync__list_mode_title', { name: syncState.serverName })}</Text>
+        <Text style={styles.title} size={16} color={HAMMER_TITLE}>{t('sync__list_mode_title', { name: syncState.serverName })}</Text>
         <ScrollView style={styles.content} keyboardShouldPersistTaps={'always'}>
           <View style={{ ...styles.btnGroup, marginTop: 0 }}>
-            <Text size={14}>{t('sync__mode_merge_tip')}</Text>
+            <Text size={14} color={HAMMER_TEXT}>{t('sync__mode_merge_tip')}</Text>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('merge_local_remote') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_merge_btn_local_remote')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('merge_local_remote') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_merge_btn_local_remote')}</Text>
               </Button>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('merge_remote_local') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_merge_btn_remote_local')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('merge_remote_local') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_merge_btn_remote_local')}</Text>
               </Button>
             </View>
           </View>
           <View style={styles.btnGroup}>
-            <Text size={14}>{t('sync__mode_overwrite_label')}</Text>
+            <Text size={14} color={HAMMER_TEXT}>{t('sync__mode_overwrite_label')}</Text>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('overwrite_local_remote') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_overwrite_btn_local_remote')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('overwrite_local_remote') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_overwrite_btn_local_remote')}</Text>
               </Button>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('overwrite_remote_local') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_overwrite_btn_remote_local')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('overwrite_remote_local') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_overwrite_btn_remote_local')}</Text>
               </Button>
             </View>
             <View>
-              <CheckBox check={isOverwrite} onChange={setOverwrite} label={t('sync__mode_overwrite')} />
+              <CheckRow check={isOverwrite} onChange={setOverwrite} label={t('sync__mode_overwrite')} />
             </View>
           </View>
           <View style={styles.btnGroup}>
-            <Text size={14}>{t('sync__mode_other_label')}</Text>
+            <Text size={14} color={HAMMER_TEXT}>{t('sync__mode_other_label')}</Text>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('cancel') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_overwrite_btn_cancel')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('cancel') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_overwrite_btn_cancel')}</Text>
               </Button>
             </View>
           </View>
         </ScrollView>
       </View>
       <View style={styles.tips}>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={HAMMER_SUB}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_merge_tip')}</Text>
           {t('sync__list_mode_merge_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={HAMMER_SUB}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_overwrite_tip')}</Text>
           {t('sync__list_mode_overwrite_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={HAMMER_SUB}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_other_tip')}</Text>
           {t('sync__list_mode_other_tip_desc')}
         </Text>
@@ -139,7 +140,6 @@ const ListModeModal = () => {
 
 
 const DislikeModeModal = () => {
-  const theme = useTheme()
   const t = useI18n()
   const handleSelectMode = (mode: LX.Sync.Dislike.SyncMode) => {
     global.app_event.selectSyncMode({ type: 'dislike', mode })
@@ -148,50 +148,50 @@ const DislikeModeModal = () => {
   return (
     <>
       <View style={styles.main}>
-        <Text style={styles.title} size={16}>{t('sync__dislike_mode_title', { name: syncState.serverName })}</Text>
+        <Text style={styles.title} size={16} color={HAMMER_TITLE}>{t('sync__dislike_mode_title', { name: syncState.serverName })}</Text>
         <ScrollView style={styles.content} keyboardShouldPersistTaps={'always'}>
           <View style={{ ...styles.btnGroup, marginTop: 0 }}>
-            <Text size={14}>{t('sync__mode_merge_tip')}</Text>
+            <Text size={14} color={HAMMER_TEXT}>{t('sync__mode_merge_tip')}</Text>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('merge_local_remote') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_merge_btn_local_remote')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('merge_local_remote') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_merge_btn_local_remote')}</Text>
               </Button>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('merge_remote_local') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_merge_btn_remote_local')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('merge_remote_local') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_merge_btn_remote_local')}</Text>
               </Button>
             </View>
           </View>
           <View style={styles.btnGroup}>
-            <Text size={14}>{t('sync__mode_overwrite_label')}</Text>
+            <Text size={14} color={HAMMER_TEXT}>{t('sync__mode_overwrite_label')}</Text>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('overwrite_local_remote') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_overwrite_btn_local_remote')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('overwrite_local_remote') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_overwrite_btn_local_remote')}</Text>
               </Button>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('overwrite_remote_local') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_overwrite_btn_remote_local')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('overwrite_remote_local') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_overwrite_btn_remote_local')}</Text>
               </Button>
             </View>
           </View>
           <View style={styles.btnGroup}>
-            <Text size={14}>{t('sync__mode_other_label')}</Text>
+            <Text size={14} color={HAMMER_TEXT}>{t('sync__mode_other_label')}</Text>
             <View style={styles.btns}>
-              <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={() => { handleSelectMode('cancel') }}>
-                <Text size={13} color={theme['c-button-font']}>{t('sync__mode_overwrite_btn_cancel')}</Text>
+              <Button style={styles.btn} onPress={() => { handleSelectMode('cancel') }}>
+                <Text size={13} color={HAMMER_TEXT} style={styles.btnText}>{t('sync__mode_overwrite_btn_cancel')}</Text>
               </Button>
             </View>
           </View>
         </ScrollView>
       </View>
       <View style={styles.tips}>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={HAMMER_SUB}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_merge_tip')}</Text>
           {t('sync__dislike_mode_merge_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={HAMMER_SUB}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_overwrite_tip')}</Text>
           {t('sync__dislike_mode_overwrite_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={HAMMER_SUB}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_other_tip')}</Text>
           {t('sync__dislike_mode_other_tip_desc')}
         </Text>
@@ -216,4 +216,3 @@ export default ({ componentId }: { componentId: string }) => {
     </ModalContent>
   )
 }
-

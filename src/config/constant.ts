@@ -1,5 +1,5 @@
 export const HEADER_HEIGHT = 42
-export const LIST_ITEM_HEIGHT = 54
+export const LIST_ITEM_HEIGHT = 64
 export const LIST_SCROLL_POSITION_KEY = '__LIST_SCROLL_POSITION_KEY__'
 
 export const SPLIT_CHAR = {
@@ -45,11 +45,13 @@ export const storageDataPrefix = {
   list: '@list__',
   listScrollPosition: '@list_scroll_position',
   listPrevSelectId: '@list_prev_select_id',
+  listRecentId: '@list_recent_id',
 
   lyric: '@lyric__',
   musicUrl: '@music_url__',
   musicOtherSource: '@music_other_source__',
   playInfo: '@play_info',
+  playHistory: '@play_history',
 
   syncAuthKey: '@sync_auth_key',
   syncHost: '@sync_host',
@@ -95,18 +97,33 @@ export const storageDataPrefixOld = {
   notificationTipEnable: '@notification_tip_enable',
 } as const
 
-export const APP_PROVIDER_NAME = 'cn.toside.music.mobile.provider'
+export const APP_PROVIDER_NAME = 'x.mc.sos.provider'
 
 
-export const NAV_MENUS = [
+/**
+ * 底部 5 个标签：以洛雪音乐的在线功能为主（搜索 / 歌单 / 排行榜 / 我的列表 / 我的）
+ * 界面外壳与图标风格仍用锤子音乐的那一套（图标取自洛雪自带的 icoMoon 字体）
+ */
+export const TAB_MENUS = [
   { id: 'nav_search', icon: 'search-2' },
   { id: 'nav_songlist', icon: 'album' },
   { id: 'nav_top', icon: 'leaderboard' },
   { id: 'nav_love', icon: 'love' },
-  // { id: 'download', icon: 'download-2' },
-  { id: 'nav_setting', icon: 'setting' },
+  { id: 'nav_mine', icon: 'setting' },
 ] as const
 
+/**
+ * 全部导航页 = 底部 5 个标签。
+ * 本地音乐已改为独立的导航页面（pushLocalMusicScreen），不再属于首页标签。
+ */
+export const NAV_MENUS = TAB_MENUS
+
+/**
+ * 抽屉导航里的菜单（当前为空：本地音乐已并入「我的列表」的列表切换条）
+ */
+export const DRAWER_MENUS = [] as const
+
+export type TAB_ID_Type = typeof TAB_MENUS[number]['id']
 export type NAV_ID_Type = typeof NAV_MENUS[number]['id']
 
 export const LXM_FILE_EXT_RXP = ['json', 'lxmc', 'bin']

@@ -1,82 +1,70 @@
 import { useCallback } from 'react'
 import Text from '@/components/common/Text'
-import { View, TouchableOpacity, ScrollView } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import { confirmDialog, createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { useUserApiList, state as userApiState } from '@/store/userApi'
 import { useSettingValue } from '@/store/setting/hook'
 import { removeUserApi, setUserApiAllowShowUpdateAlert } from '@/core/userApi'
-import { BorderRadius } from '@/theme'
-import CheckBox from '@/components/common/CheckBox'
-import { Icon } from '@/components/common/Icon'
+import CheckRow from '@/components/common/CheckRow'
+import EmptyView from '@/components/common/EmptyView'
 import settingState from '@/store/setting/state'
 import apiSourceInfo from '@/utils/musicSdk/api-source-info'
 import { setApiSource } from '@/core/apiSource'
 
+const HAMMER_RED = '#E64040'
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_SUB = '#939396'
+const HAMMER_LINE = '#ededed'
+
 const formatVersionName = (version: string) => {
   return /^\d/.test(version) ? `v${version}` : version
 }
+
 const ListItem = ({ item, activeId, onRemove, onChangeAllowShowUpdateAlert }: {
   item: LX.UserApi.UserApiInfo
   activeId: string
   onRemove: (id: string, name: string) => void
   onChangeAllowShowUpdateAlert: (id: string, enabled: boolean) => void
 }) => {
-  const theme = useTheme()
   const t = useI18n()
+  const active = activeId == item.id
   const changeAllowShowUpdateAlert = (check: boolean) => {
     onChangeAllowShowUpdateAlert(item.id, check)
   }
   const handleRemove = () => {
     onRemove(item.id, item.name)
   }
+  const meta = [item.version ? formatVersionName(item.version) : '', item.author ?? ''].filter(Boolean).join(' · ')
 
   return (
-    <View style={{ ...styles.listItem, backgroundColor: activeId == item.id ? theme['c-primary-background-active'] : 'transparent' }}>
+    <View style={styles.listItem}>
       <View style={styles.listItemLeft}>
-        <Text size={14}>
-          {item.name}
-          {
-            item.version ? (
-              <Text size={12} color={theme['c-font-label']}>{ '   ' + formatVersionName(item.version) }</Text>
-            ) : null
-          }
-          {
-            item.author ? (
-              <Text size={12} color={theme['c-font-label']}>{ '   ' + item.author }</Text>
-            ) : null
-          }
-        </Text>
+        <View style={styles.nameRow}>
+          <Text size={15} color={active ? HAMMER_RED : HAMMER_TEXT} numberOfLines={1} style={styles.name}>{item.name}</Text>
+          <Text size={12} color={HAMMER_SUB} numberOfLines={1}>{meta}</Text>
+        </View>
         {
           item.description ? (
-            <Text size={12} color={theme['c-font-label']}>{item.description}</Text>
+            <Text size={12} color={HAMMER_SUB} style={styles.desc} numberOfLines={2}>{item.description}</Text>
           ) : null
         }
-        <CheckBox check={item.allowShowUpdateAlert} label={t('user_api_allow_show_update_alert')} onChange={changeAllowShowUpdateAlert} size={0.86} />
+        <CheckRow check={item.allowShowUpdateAlert} label={t('user_api_allow_show_update_alert')} onChange={changeAllowShowUpdateAlert} textSize={13} />
       </View>
-      <View style={styles.listItemRight}>
-        <TouchableOpacity style={styles.btn} onPress={handleRemove}>
-          <Icon name="close" color={theme['c-button-font']} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.removeBtn} activeOpacity={0.6} onPress={handleRemove}>
+        <Text size={13} color={HAMMER_SUB} style={styles.removeText}>{t('delete')}</Text>
+      </TouchableOpacity>
     </View>
   )
 }
 
-export interface UserApiEditModalProps {
-  onSave: (rules: string) => void
-  // onSourceChange: SourceSelectorProps['onSourceChange']
-}
-export interface UserApiEditModalType {
-  show: (rules: string) => void
-}
-
-
+/**
+ * 自定义源列表（锤子风）：白底、发丝分隔线、右侧描边「移除」小按钮。
+ * 抽取成纯列表后供自定义源独立页复用，不再自己带滚动容器。
+ */
 export default () => {
   const userApiList = useUserApiList()
   const apiSource = useSettingValue('common.apiSource')
-  const theme = useTheme()
   const t = useI18n()
 
   const handleRemove = useCallback(async(id: string, name: string) => {
@@ -99,67 +87,71 @@ export default () => {
     void setUserApiAllowShowUpdateAlert(id, enabled)
   }, [])
 
+  if (!userApiList.length) {
+    return <EmptyView text={t('user_api_empty')} icon="available_updates" />
+  }
+
   return (
-    <ScrollView style={styles.scrollView} keyboardShouldPersistTaps={'always'}>
-      <View onStartShouldSetResponder={() => true}>
-        {
-          userApiList.length
-            ? userApiList.map((item) => {
-              return (
-              <ListItem
-                key={item.id}
-                item={item}
-                activeId={apiSource}
-                onRemove={handleRemove}
-                onChangeAllowShowUpdateAlert={handleChangeAllowShowUpdateAlert}
-              />
-              )
-            })
-            : <Text style={styles.tipText} color={theme['c-font-label']}>{t('user_api_empty')}</Text>
-        }
-      </View>
-    </ScrollView>
+    <View>
+      {
+        userApiList.map((item) => {
+          return (
+            <ListItem
+              key={item.id}
+              item={item}
+              activeId={apiSource}
+              onRemove={handleRemove}
+              onChangeAllowShowUpdateAlert={handleChangeAllowShowUpdateAlert}
+            />
+          )
+        })
+      }
+    </View>
   )
 }
 
 
 const styles = createStyle({
-  scrollView: {
-    paddingHorizontal: 7,
-    flexGrow: 0,
-  },
-  list: {
-    paddingBottom: 15,
-    flexDirection: 'column',
-  },
   listItem: {
-    padding: 10,
-    borderRadius: BorderRadius.normal,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 14,
+    paddingRight: 14,
+    borderBottomWidth: 0.5,
+    borderBottomColor: HAMMER_LINE,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   listItemLeft: {
     paddingRight: 10,
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
     gap: 2,
   },
-  listItemRight: {
-    flex: 0,
-    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
   },
-  // btns: {
-  //   padding: 5,
-  // },
-  btn: {
-    padding: 10,
-    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  name: {
+    flexShrink: 1,
+    paddingRight: 8,
   },
-  tipText: {
-    textAlign: 'center',
-    marginTop: 25,
-    marginBottom: 15,
+  desc: {
+    marginTop: 2,
+  },
+  removeBtn: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 26,
+    paddingLeft: 12,
+    paddingRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#ccdcdbdb',
+    backgroundColor: '#ffffff',
+  },
+  removeText: {
   },
 })
-
-

@@ -2,7 +2,6 @@ import { memo } from 'react'
 import { View, StyleSheet } from 'react-native'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 
 export default memo(({ onConfirm, onHide, dirOnly }: {
@@ -11,17 +10,21 @@ export default memo(({ onConfirm, onHide, dirOnly }: {
   dirOnly: boolean
 }) => {
   const t = useI18n()
-  const theme = useTheme()
 
   return (
-    <View style={{ ...styles.footer, backgroundColor: theme['c-content-background'] }}>
-      <Button style={{ ...styles.footerBtn, width: dirOnly ? '50%' : '100%' }} onPress={onHide}>
-        <Text color={theme['c-button-font']}>{t('cancel')}</Text>
+    <View style={{ ...styles.footer, backgroundColor: '#ffffff' }}>
+      <Button style={styles.footerBtn} onPress={onHide}>
+        <Text size={14} color={'#4d4d4d'} style={styles.footerBtnText}>{t('cancel')}</Text>
       </Button>
       {dirOnly
-        ? <Button style={styles.footerBtn} onPress={onConfirm}>
-            <Text color={theme['c-button-font']}>{t('confirm')}</Text>
-          </Button>
+        ? (
+          <>
+            <View style={styles.splitLine} />
+            <Button style={styles.footerBtn} onPress={onConfirm}>
+              <Text size={14} color={'#E64040'} style={styles.footerBtnText}>{t('confirm')}</Text>
+            </Button>
+          </>
+          )
         : null
       }
     </View>
@@ -33,13 +36,25 @@ const styles = StyleSheet.create({
     flexGrow: 0,
     flexShrink: 0,
     flexDirection: 'row',
-    // borderTopWidth: BorderWidths.normal,
-    elevation: 8,
+    alignItems: 'center',
+    height: 48,
+    borderTopWidth: 0.5,
+    borderTopColor: '#ededed',
+    backgroundColor: '#ffffff',
   },
   footerBtn: {
-    width: '50%',
-    paddingTop: 16,
-    paddingBottom: 16,
+    flexGrow: 1,
+    flexShrink: 1,
+    height: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  footerBtnText: {
+    fontWeight: 'bold',
+  },
+  splitLine: {
+    width: 0.5,
+    height: 18,
+    backgroundColor: '#ededed',
   },
 })

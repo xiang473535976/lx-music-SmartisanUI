@@ -4,7 +4,6 @@ import { View } from 'react-native'
 import ConfirmAlert, { type ConfirmAlertType } from '@/components/common/ConfirmAlert'
 import Text from '@/components/common/Text'
 import Input, { type InputType } from '@/components/common/Input'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
 
@@ -33,7 +32,6 @@ interface PositionInputType {
   focus: () => void
 }
 const PositionInput = forwardRef<PositionInputType, {}>((props, ref) => {
-  const theme = useTheme()
   const t = useI18n()
   const [text, setText] = useState('')
   const inputRef = useRef<InputType>(null)
@@ -56,7 +54,7 @@ const PositionInput = forwardRef<PositionInputType, {}>((props, ref) => {
       value={text}
       onChangeText={setText}
       ref={inputRef}
-      style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+      style={{ ...styles.input, backgroundColor: '#ffffff' }}
     />
   )
 })

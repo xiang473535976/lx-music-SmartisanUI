@@ -5,7 +5,6 @@ import { searchListMusic } from './listAction'
 import Button from '@/components/common/Button'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
-import { useTheme } from '@/store/theme/hook'
 import { View } from 'react-native'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { getListMusics } from '@/core/list'
@@ -33,7 +32,6 @@ export default forwardRef<ListMusicSearchType, ListMusicSearchProps>(({ onScroll
   const [visible, setVisible] = useState(false)
   const currentListIdRef = useRef('')
   const currentKeywordRef = useRef('')
-  const theme = useTheme()
 
   const handleShowList = (keyword: string, height: number) => {
     searchTipListRef.current?.setHeight(height)
@@ -98,9 +96,9 @@ export default forwardRef<ListMusicSearchType, ListMusicSearchProps>(({ onScroll
       <Button style={styles.item} onPress={() => { onScrollToInfo(item) }} key={index}>
         <View style={styles.itemName}>
           <Text numberOfLines={1}>{item.name}</Text>
-          <Text style={styles.subName} numberOfLines={1} size={12} color={theme['c-font-label']}>{item.singer} ({item.meta.albumName})</Text>
+          <Text style={styles.subName} numberOfLines={1} size={12} color={HAMMER_SUB}>{item.singer} ({item.meta.albumName})</Text>
         </View>
-        <Text style={styles.itemSource} size={12} color={theme['c-font-label']}>{item.source}</Text>
+        <Text style={styles.itemSource} size={12} color={HAMMER_SUB}>{item.source}</Text>
       </Button>
     )
   }
@@ -122,6 +120,9 @@ export default forwardRef<ListMusicSearchType, ListMusicSearchProps>(({ onScroll
   )
 })
 
+
+// 锤子风配色
+const HAMMER_SUB = '#939396'
 
 const styles = createStyle({
   item: {

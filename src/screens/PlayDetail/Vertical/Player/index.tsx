@@ -1,20 +1,17 @@
 import { memo } from 'react'
 import { View } from 'react-native'
 
-// import Title from './components/Title'
-import MoreBtn from './components/MoreBtn'
-import PlayInfo from './components/PlayInfo'
 import ControlBtn from './components/ControlBtn'
+import VolumeBar from './components/VolumeBar'
 import { createStyle } from '@/utils/tools'
 import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 
-
+// 锤子播放页底部区：控制按钮行（循环 52 / 上一首 88 / 播放 100 / 下一首 88 / 收藏 52）→ 音量条 32dp
 export default memo(() => {
   return (
     <View style={styles.container} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_player}>
-      <PlayInfo />
       <ControlBtn />
-      <MoreBtn />
+      <VolumeBar />
     </View>
   )
 })
@@ -23,22 +20,7 @@ const styles = createStyle({
   container: {
     flex: 0,
     width: '100%',
-    // paddingTop: progressContentPadding,
-    // marginTop: -progressContentPadding,
-    // backgroundColor: 'rgba(0, 0, 0, .1)',
-    paddingHorizontal: 15,
-    paddingBottom: 15,
-    paddingTop: 5,
-    // backgroundColor: AppColors.primary,
-    // backgroundColor: 'red',
+    paddingBottom: 10,
     flexDirection: 'column',
-  },
-  status: {
-    marginTop: 10,
-    flexDirection: 'column',
-    flex: 0,
-    paddingLeft: 5,
-    justifyContent: 'space-evenly',
-    // backgroundColor: 'rgba(0, 0, 0, .1)',
   },
 })

@@ -1,10 +1,11 @@
 import { View } from 'react-native'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
-import { BorderWidths } from '@/theme'
 import { createStyle, toast } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { useMusicExistsList } from '@/store/list/hook'
+
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ccdcdbdb'
 
 export default ({ listInfo, onPress, musicInfo, width }: {
   listInfo: LX.List.MyListInfo
@@ -12,7 +13,6 @@ export default ({ listInfo, onPress, musicInfo, width }: {
   musicInfo: LX.Music.MusicInfo
   width: number
 }) => {
-  const theme = useTheme()
   const isExists = useMusicExistsList(listInfo, musicInfo)
 
   const handlePress = () => {
@@ -26,10 +26,10 @@ export default ({ listInfo, onPress, musicInfo, width }: {
   return (
     <View style={{ ...styles.listItem, width }}>
       <Button
-        style={{ ...styles.button, backgroundColor: theme['c-button-background'], borderColor: theme['c-primary-light-400-alpha-300'], opacity: isExists ? 0.4 : 1 }}
+        style={{ ...styles.button, opacity: isExists ? 0.4 : 1 }}
         onPress={handlePress}
       >
-        <Text numberOfLines={1} size={14} color={theme['c-button-font']}>{listInfo.name}</Text>
+        <Text numberOfLines={1} size={14} color={HAMMER_TEXT}>{listInfo.name}</Text>
       </Button>
     </View>
   )
@@ -37,12 +37,10 @@ export default ({ listInfo, onPress, musicInfo, width }: {
 
 export const styles = createStyle({
   listItem: {
-    // width: '50%',
     paddingRight: 13,
-    // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   button: {
-    height: 36,
+    height: 34,
     paddingLeft: 10,
     paddingRight: 10,
     marginRight: 10,
@@ -51,6 +49,8 @@ export const styles = createStyle({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: BorderWidths.normal1,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
+    backgroundColor: '#ffffff',
   },
 })

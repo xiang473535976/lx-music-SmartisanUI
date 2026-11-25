@@ -2,7 +2,6 @@ import { memo, useMemo, useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
-import { useTheme } from '@/store/theme/hook'
 
 const TEXT_LIMIT = 160
 const SUB_TEXT_LIMIT = TEXT_LIMIT * 1.2
@@ -10,7 +9,6 @@ const SUB_TEXT_LIMIT = TEXT_LIMIT * 1.2
 
 export default memo(({ text }: { text: string }) => {
   const [show, setShow] = useState(false)
-  const theme = useTheme()
 
   const length = useMemo(() => {
     // text.length + (text.match(CHAR_RXP)?.length ?? 0) * 40
@@ -37,10 +35,10 @@ export default memo(({ text }: { text: string }) => {
       <View>
         {
           show ? <Text selectable style={styles.text}>{text}</Text>
-            : <Text selectable style={styles.text}>{text.substring(0, length)} <Text color={theme['c-font-label']}>……</Text></Text>
+            : <Text selectable style={styles.text}>{text.substring(0, length)} <Text color={'#939396'}>……</Text></Text>
         }
         <TouchableOpacity style={styles.toggle} onPress={() => { setShow(!show) }}>
-          <Text color={theme['c-primary-font']}>{show ? global.i18n.t('comment_hide_text') : global.i18n.t('comment_show_text')}</Text>
+          <Text color={'#E64040'}>{show ? global.i18n.t('comment_hide_text') : global.i18n.t('comment_show_text')}</Text>
         </TouchableOpacity>
 
       </View>

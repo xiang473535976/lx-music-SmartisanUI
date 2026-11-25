@@ -2,11 +2,16 @@ import { Navigation } from 'react-native-navigation'
 // import { InteractionManager } from 'react-native'
 
 import {
+  ABOUT_SCREEN,
   HOME_SCREEN,
   PLAY_DETAIL_SCREEN,
   SONGLIST_DETAIL_SCREEN,
   COMMENT_SCREEN,
-  // SETTING_SCREEN,
+  SETTING_SCREEN,
+  SETTING_DETAIL_SCREEN,
+  PLAYED_LIST_SCREEN,
+  USER_API_SCREEN,
+  LIST_DETAIL_SCREEN,
 } from './screenNames'
 
 import themeState from '@/store/theme/state'
@@ -14,6 +19,7 @@ import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import { getStatusBarStyle } from './utils'
 import { windowSizeTools } from '@/utils/windowSizeTools'
 import { type ListInfoItem } from '@/store/songlist/state'
+import { type SettingScreenIds } from '@/screens/Home/Views/Setting/Main'
 
 // const store = getStore()
 // const getTheme = () => getter('common', 'theme')(store.getState())
@@ -387,87 +393,261 @@ export function pushCommentScreen(componentId: string) {
   })
 }
 
-// export function pushSettingScreen(componentId: string) {
-//   /*
-//     Navigation.setDefaultOptions({
-//       topBar: {
-//         background: {
-//           color: '#039893',
-//         },
-//         title: {
-//           color: 'white',
-//         },
-//         backButton: {
-//           title: '', // Remove previous screen name from back button
-//           color: 'white',
-//         },
-//         buttonColor: 'white',
-//       },
-//       statusBar: {
-//         style: 'light',
-//       },
-//       layout: {
-//         orientation: ['portrait'],
-//       },
-//       bottomTabs: {
-//         titleDisplayMode: 'alwaysShow',
-//       },
-//       bottomTab: {
-//         textColor: 'gray',
-//         selectedTextColor: 'black',
-//         iconColor: 'gray',
-//         selectedIconColor: 'black',
-//       },
-//     })
-//   */
-//     const theme = themeState.theme
+export function pushAboutScreen(componentId: string) {
+  requestAnimationFrame(() => {
+    const theme = themeState.theme
 
-//     void Navigation.push(componentId, {
-//       component: {
-//         name: SETTING_SCREEN,
-//         options: {
-//           topBar: {
-//             visible: false,
-//             height: 0,
-//             drawBehind: false,
-//           },
-//           statusBar: {
-//             drawBehind: true,
-//             visible: true,
-//             style: getStatusBarStyle(theme.isDark),
-//             backgroundColor: 'transparent',
-//           },
-//           navigationBar: {
-//             // visible: false,
-//             backgroundColor: theme['c-content-background'],
-//           },
-//           layout: {
-//             componentBackgroundColor: theme['c-content-background'],
-//           },
-//           animations: {
-//             push: {
-//               content: {
-//                 translationX: {
-//                   from: windowSizeTools.getSize().width,
-//                   to: 0,
-//                   duration: 300,
-//                 },
-//               },
-//             },
-//             pop: {
-//               content: {
-//                 translationX: {
-//                   from: 0,
-//                   to: windowSizeTools.getSize().width,
-//                   duration: 300,
-//                 },
-//               },
-//             },
-//           },
-//         },
-//       },
-//   })
-// }
+    void Navigation.push(componentId, {
+      component: {
+        name: ABOUT_SCREEN,
+        options: {
+          topBar: {
+            visible: false,
+            height: 0,
+            drawBehind: false,
+          },
+          statusBar: {
+            drawBehind: true,
+            visible: true,
+            style: getStatusBarStyle(theme.isDark),
+            backgroundColor: 'transparent',
+          },
+          navigationBar: {
+            backgroundColor: theme['c-content-background'],
+          },
+          layout: {
+            componentBackgroundColor: theme['c-content-background'],
+          },
+          animations: {
+            push: {
+              content: {
+                translationX: {
+                  from: windowSizeTools.getSize().width,
+                  to: 0,
+                  duration: 300,
+                },
+              },
+            },
+            pop: {
+              content: {
+                translationX: {
+                  from: 0,
+                  to: windowSizeTools.getSize().width,
+                  duration: 300,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+}
+
+export function pushPlayedListScreen(componentId: string) {
+  requestAnimationFrame(() => {
+    const theme = themeState.theme
+
+    void Navigation.push(componentId, {
+      component: {
+        name: PLAYED_LIST_SCREEN,
+        options: {
+          topBar: {
+            visible: false,
+            height: 0,
+            drawBehind: false,
+          },
+          statusBar: {
+            drawBehind: true,
+            visible: true,
+            style: getStatusBarStyle(theme.isDark),
+            backgroundColor: 'transparent',
+          },
+          navigationBar: {
+            backgroundColor: theme['c-content-background'],
+          },
+          layout: {
+            componentBackgroundColor: theme['c-content-background'],
+          },
+          animations: {
+            push: {
+              content: {
+                translationX: {
+                  from: windowSizeTools.getSize().width,
+                  to: 0,
+                  duration: 300,
+                },
+              },
+            },
+            pop: {
+              content: {
+                translationX: {
+                  from: 0,
+                  to: windowSizeTools.getSize().width,
+                  duration: 300,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+}
+
+export function pushListDetailScreen(componentId: string, listId: string, title: string) {
+  requestAnimationFrame(() => {
+    const theme = themeState.theme
+
+    void Navigation.push(componentId, {
+      component: {
+        name: LIST_DETAIL_SCREEN,
+        passProps: { listId, title },
+        options: {
+          topBar: {
+            visible: false,
+            height: 0,
+            drawBehind: false,
+          },
+          statusBar: {
+            drawBehind: true,
+            visible: true,
+            style: getStatusBarStyle(theme.isDark),
+            backgroundColor: 'transparent',
+          },
+          navigationBar: {
+            backgroundColor: theme['c-content-background'],
+          },
+          layout: {
+            componentBackgroundColor: theme['c-content-background'],
+          },
+          animations: {
+            push: {
+              content: {
+                translationX: {
+                  from: windowSizeTools.getSize().width,
+                  to: 0,
+                  duration: 300,
+                },
+              },
+            },
+            pop: {
+              content: {
+                translationX: {
+                  from: 0,
+                  to: windowSizeTools.getSize().width,
+                  duration: 300,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+}
+
+export function pushUserApiScreen(componentId: string) {
+  requestAnimationFrame(() => {
+    const theme = themeState.theme
+
+    void Navigation.push(componentId, {
+      component: {
+        name: USER_API_SCREEN,
+        options: {
+          topBar: {
+            visible: false,
+            height: 0,
+            drawBehind: false,
+          },
+          statusBar: {
+            drawBehind: true,
+            visible: true,
+            style: getStatusBarStyle(theme.isDark),
+            backgroundColor: 'transparent',
+          },
+          navigationBar: {
+            backgroundColor: theme['c-content-background'],
+          },
+          layout: {
+            componentBackgroundColor: theme['c-content-background'],
+          },
+          animations: {
+            push: {
+              content: {
+                translationX: {
+                  from: windowSizeTools.getSize().width,
+                  to: 0,
+                  duration: 300,
+                },
+              },
+            },
+            pop: {
+              content: {
+                translationX: {
+                  from: 0,
+                  to: windowSizeTools.getSize().width,
+                  duration: 300,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+}
+
+export function pushSettingScreen(componentId: string) {
+  requestAnimationFrame(() => {
+    const theme = themeState.theme
+
+    void Navigation.push(componentId, {
+      component: {
+        name: SETTING_SCREEN,
+        options: {
+          topBar: {
+            visible: false,
+            height: 0,
+            drawBehind: false,
+          },
+          statusBar: {
+            drawBehind: true,
+            visible: true,
+            style: getStatusBarStyle(theme.isDark),
+            backgroundColor: 'transparent',
+          },
+          navigationBar: {
+            backgroundColor: theme['c-content-background'],
+          },
+          layout: {
+            componentBackgroundColor: theme['c-content-background'],
+          },
+          animations: {
+            push: {
+              content: {
+                translationX: {
+                  from: windowSizeTools.getSize().width,
+                  to: 0,
+                  duration: 300,
+                },
+              },
+            },
+            pop: {
+              content: {
+                translationX: {
+                  from: 0,
+                  to: windowSizeTools.getSize().width,
+                  duration: 300,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+}
 
 /*
 export function pushSingleScreenApp() {
@@ -588,3 +768,57 @@ export function pushTabBasedApp() {
   })
 }
  */
+
+export function pushSettingDetailScreen(componentId: string, id: SettingScreenIds) {
+  requestAnimationFrame(() => {
+    const theme = themeState.theme
+
+    void Navigation.push(componentId, {
+      component: {
+        name: SETTING_DETAIL_SCREEN,
+        passProps: {
+          id,
+        },
+        options: {
+          topBar: {
+            visible: false,
+            height: 0,
+            drawBehind: false,
+          },
+          statusBar: {
+            drawBehind: true,
+            visible: true,
+            style: getStatusBarStyle(theme.isDark),
+            backgroundColor: 'transparent',
+          },
+          navigationBar: {
+            backgroundColor: theme['c-content-background'],
+          },
+          layout: {
+            componentBackgroundColor: theme['c-content-background'],
+          },
+          animations: {
+            push: {
+              content: {
+                translationX: {
+                  from: windowSizeTools.getSize().width,
+                  to: 0,
+                  duration: 300,
+                },
+              },
+            },
+            pop: {
+              content: {
+                translationX: {
+                  from: 0,
+                  to: windowSizeTools.getSize().width,
+                  duration: 300,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+}

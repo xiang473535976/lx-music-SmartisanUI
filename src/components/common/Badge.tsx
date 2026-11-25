@@ -34,15 +34,15 @@ export default memo(({ type = 'normal', children }: {
     switch (type) {
       case 'normal':
         // colors.bgColor = theme.primary
-        colors.textColor = theme['c-badge-primary']
+        colors.textColor = '#E64040'
         break
       case 'secondary':
         // colors.bgColor = theme.primary
-        colors.textColor = theme['c-badge-secondary']
+        colors.textColor = '#939396'
         break
       case 'tertiary':
         // colors.bgColor = theme.primary
-        colors.textColor = theme['c-badge-tertiary']
+        colors.textColor = '#b0b0b0'
         break
     }
     return colors

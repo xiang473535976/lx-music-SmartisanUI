@@ -1,34 +1,36 @@
 import { memo, useRef } from 'react'
 import { View, TouchableOpacity } from 'react-native'
-// import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
-import Badge, { type BadgeType } from '@/components/common/Badge'
 import { Icon } from '@/components/common/Icon'
 import { useI18n } from '@/lang'
-import { useTheme } from '@/store/theme/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { LIST_ITEM_HEIGHT } from '@/config/constant'
 import { createStyle, type RowInfo } from '@/utils/tools'
 
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_SUB = '#939396'
+const HAMMER_LINE = '#ededed'
+
 const useQualityTag = (musicInfo: LX.Music.MusicInfoOnline) => {
   const t = useI18n()
-  let info: { type: BadgeType | null, text: string } = { type: null, text: '' }
+  let text = ''
   if (musicInfo.meta._qualitys.flac24bit) {
-    info.type = 'secondary'
-    info.text = t('quality_lossless_24bit')
+    text = t('quality_lossless_24bit')
   } else if (musicInfo.meta._qualitys.flac ?? musicInfo.meta._qualitys.ape) {
-    info.type = 'secondary'
-    info.text = t('quality_lossless')
+    text = t('quality_lossless')
   } else if (musicInfo.meta._qualitys['320k']) {
-    info.type = 'tertiary'
-    info.text = t('quality_high_quality')
+    text = t('quality_high_quality')
   }
 
-  return info
+  return text
 }
 
+/**
+ * 锤子风歌曲行（在线列表 / 排行榜 / 歌单详情共用）：
+ * 左序号、曲名 15sp 深灰、副行「品质 · 来源 · 歌手」12sp 浅灰、右侧时长与三点菜单。
+ */
 export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu, selectedList, rowInfo, isShowAlbumName, isShowInterval }: {
   item: LX.Music.MusicInfoOnline
   index: number
@@ -41,8 +43,6 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
   isShowAlbumName: boolean
   isShowInterval: boolean
 }) => {
-  const theme = useTheme()
-
   const isSelected = selectedList.includes(item)
 
   const moreButtonRef = useRef<TouchableOpacity>(null)
@@ -54,30 +54,29 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
       })
     }
   }
-  const tagInfo = useQualityTag(item)
+  const qualityText = useQualityTag(item)
 
   const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
+  const sub = [qualityText, showSource ? item.source.toUpperCase() : '', singer].filter(Boolean).join(' · ')
 
   return (
-    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)' }}>
-      <TouchableOpacity style={styles.listItemLeft} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
-        <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
+    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? '#f2f2f2' : '#ffffff' }}>
+      <TouchableOpacity style={styles.listItemLeft} activeOpacity={0.6} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
+        <View style={styles.snWrap}>
+          <Text size={13} color={HAMMER_SUB}>{index + 1}</Text>
+        </View>
         <View style={styles.itemInfo}>
-          <Text numberOfLines={1}>{item.name}</Text>
-          <View style={styles.listItemSingle}>
-            { tagInfo.type ? <Badge type={tagInfo.type}>{tagInfo.text}</Badge> : null }
-            { showSource ? <Badge type="tertiary">{item.source}</Badge> : null }
-            <Text style={styles.listItemSingleText} size={11} color={theme['c-500']} numberOfLines={1}>{singer}</Text>
-          </View>
+          <Text numberOfLines={1} size={15} color={HAMMER_TEXT}>{item.name}</Text>
+          <Text style={styles.sub} size={12} color={HAMMER_SUB} numberOfLines={1}>{sub}</Text>
         </View>
         {
-          isShowInterval ? (
-            <Text size={12} color={theme['c-250']} numberOfLines={1}>{item.interval}</Text>
+          isShowInterval && item.interval ? (
+            <Text size={12} color={HAMMER_SUB} numberOfLines={1}>{item.interval}</Text>
           ) : null
         }
       </TouchableOpacity>
-     <TouchableOpacity onPress={handleShowMenu} ref={moreButtonRef} style={styles.moreButton}>
-        <Icon name="dots-vertical" style={{ color: theme['c-350'] }} size={12} />
+      <TouchableOpacity onPress={handleShowMenu} ref={moreButtonRef} style={styles.moreButton} activeOpacity={0.6}>
+        <Icon name="dots-vertical" style={{ color: '#b0b0b0' }} size={14} />
       </TouchableOpacity>
     </View>
   )
@@ -92,13 +91,13 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
 
 const styles = createStyle({
   listItem: {
-    // width: '100%',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    // paddingLeft: 10,
-    paddingRight: 2,
+    paddingLeft: 14,
+    paddingRight: 4,
     alignItems: 'center',
-    // borderBottomWidth: BorderWidths.normal,
+    borderBottomWidth: 0.5,
+    borderBottomColor: HAMMER_LINE,
   },
   listItemLeft: {
     flex: 1,
@@ -107,65 +106,23 @@ const styles = createStyle({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  sn: {
-    width: 38,
-    // fontSize: 12,
-    textAlign: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.2)',
-    paddingLeft: 3,
-    paddingRight: 3,
+  snWrap: {
+    width: 26,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   itemInfo: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingRight: 2,
-    // paddingTop: 10,
-    // paddingBottom: 10,
+    paddingRight: 8,
   },
-  // listItemTitle: {
-  //   // backgroundColor: 'rgba(0,0,0,0.2)',
-  //   flexGrow: 0,
-  //   flexShrink: 1,
-  //   // fontSize: 15,
-  // },
-  listItemSingle: {
-    paddingTop: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // alignItems: 'flex-end',
-    // backgroundColor: 'rgba(0,0,0,0.2)',
-  },
-  listItemTimeLabel: {
-    marginRight: 5,
-    fontWeight: '400',
-  },
-  listItemSingleText: {
-    // fontSize: 13,
-    // paddingTop: 2,
-    flexGrow: 0,
-    flexShrink: 1,
-    fontWeight: '300',
-  },
-  listItemBadge: {
-    // fontSize: 10,
-    paddingLeft: 5,
-    paddingTop: 2,
-    alignSelf: 'flex-start',
-  },
-  listItemRight: {
-    flexGrow: 0,
-    flexShrink: 0,
-    flexBasis: 'auto',
-    justifyContent: 'center',
+  sub: {
+    marginTop: 3,
   },
   moreButton: {
-    height: '80%',
-    paddingLeft: 16,
-    paddingRight: 16,
-    // paddingTop: 10,
-    // paddingBottom: 10,
-    // backgroundColor: 'rgba(0,0,0,0.2)',
+    height: '100%',
+    paddingLeft: 12,
+    paddingRight: 12,
     justifyContent: 'center',
   },
 })
-

@@ -1,6 +1,5 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { Icon } from '@/components/common/Icon'
-import { useTheme } from '@/store/theme/hook'
+import { StyleSheet, TouchableOpacity, View, Image as RNImage } from 'react-native'
+import { SmartisanImages } from '@/resources/smartisan'
 // import { useIsPlay } from '@/store/player/hook'
 import { playNext, playPrev, togglePlay } from '@/core/player/player'
 // import { scaleSizeW } from '@/utils/pixelRatio'
@@ -12,34 +11,31 @@ import { BTN_WIDTH } from '../MoreBtn/Btn'
 // const WIDTH = scaleSizeW(48)
 
 const PrevBtn = ({ size }: { size: number }) => {
-  const theme = useTheme()
   const handlePlayPrev = () => {
     void playPrev()
   }
   return (
     <TouchableOpacity style={{ ...styles.cotrolBtn, width: size, height: size }} activeOpacity={0.5} onPress={handlePlayPrev}>
-      <Icon name='prevMusic' color={theme['c-button-font']} rawSize={size * 0.7} />
+      <RNImage source={SmartisanImages.playingPrev} style={{ width: size * 0.82, height: size * 0.82 }} resizeMode="contain" />
     </TouchableOpacity>
   )
 }
 const NextBtn = ({ size }: { size: number }) => {
-  const theme = useTheme()
   const handlePlayNext = () => {
     void playNext()
   }
   return (
     <TouchableOpacity style={{ ...styles.cotrolBtn, width: size, height: size }} activeOpacity={0.5} onPress={handlePlayNext}>
-      <Icon name='nextMusic' color={theme['c-button-font']} rawSize={size * 0.7} />
+      <RNImage source={SmartisanImages.playingNext} style={{ width: size * 0.82, height: size * 0.82 }} resizeMode="contain" />
     </TouchableOpacity>
   )
 }
 
 const TogglePlayBtn = ({ size }: { size: number }) => {
-  const theme = useTheme()
   const isPlay = useIsPlay()
   return (
     <TouchableOpacity style={{ ...styles.cotrolBtn, width: size, height: size }} activeOpacity={0.5} onPress={togglePlay}>
-      <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font']} rawSize={size * 0.7} />
+      <RNImage source={isPlay ? SmartisanImages.playingPause : SmartisanImages.playingPlay} style={{ width: size, height: size }} resizeMode="contain" />
     </TouchableOpacity>
   )
 }

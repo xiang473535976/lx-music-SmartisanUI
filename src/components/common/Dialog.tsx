@@ -5,11 +5,17 @@ import Modal, { type ModalType } from './Modal'
 import { Icon } from '@/components/common/Icon'
 import { useKeyboard } from '@/utils/hooks'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
 
 const HEADER_HEIGHT = 20
+// 锤子风对话框配色
+const DIALOG_BG = '#ffffff'
+const TITLE_BAR_BG = '#ededed'
+const TITLE_COLOR = '#5b5b5b'
+const CLOSE_ICON = '#939396'
+const CLOSE_PRESSED = '#e0e0e0'
+
 const styles = createStyle({
   centeredView: {
     flex: 1,
@@ -20,15 +26,7 @@ const styles = createStyle({
     maxWidth: '90%',
     minWidth: '60%',
     maxHeight: '78%',
-    // backgroundColor: 'white',
     borderRadius: 4,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
     elevation: 3,
   },
   header: {
@@ -40,7 +38,7 @@ const styles = createStyle({
     height: HEADER_HEIGHT,
   },
   title: {
-    paddingLeft: 5,
+    paddingLeft: 10,
     paddingRight: 25,
     lineHeight: HEADER_HEIGHT,
   },
@@ -79,7 +77,6 @@ export default forwardRef<DialogType, DialogProps>(({
   children,
   height,
 }: DialogProps, ref) => {
-  const theme = useTheme()
   const { keyboardShown, keyboardHeight } = useKeyboard()
   const modalRef = useRef<ModalType>(null)
 
@@ -91,18 +88,18 @@ export default forwardRef<DialogType, DialogProps>(({
 
   const closeBtnComponent = useMemo(() => {
     return closeBtn
-      ? <TouchableHighlight style={{ ...styles.closeBtn, width: scaleSizeH(HEADER_HEIGHT) }} underlayColor={theme['c-primary-dark-200-alpha-600']} onPress={() => modalRef.current?.setVisible(false)}>
-          <Icon name="close" color={theme['c-primary-dark-500-alpha-500']} size={10} />
+      ? <TouchableHighlight style={{ ...styles.closeBtn, width: scaleSizeH(HEADER_HEIGHT) }} underlayColor={CLOSE_PRESSED} onPress={() => modalRef.current?.setVisible(false)}>
+          <Icon name="close" color={CLOSE_ICON} size={10} />
         </TouchableHighlight>
       : null
-  }, [closeBtn, theme])
+  }, [closeBtn])
 
   return (
     <Modal onHide={onHide} keyHide={keyHide} bgHide={bgHide} bgColor="rgba(50,50,50,.3)" ref={modalRef}>
       <View style={{ ...styles.centeredView, paddingBottom: keyboardShown ? keyboardHeight : 0 }}>
-        <View style={{ ...styles.modalView, height, backgroundColor: theme['c-content-background'] }} onStartShouldSetResponder={() => true}>
-          <View style={{ ...styles.header, backgroundColor: theme['c-primary-light-100-alpha-100'] }}>
-            <Text style={styles.title} size={13} color={theme['c-primary-light-1000']} numberOfLines={1}>{title}</Text>
+        <View style={{ ...styles.modalView, height, backgroundColor: DIALOG_BG }} onStartShouldSetResponder={() => true}>
+          <View style={{ ...styles.header, backgroundColor: TITLE_BAR_BG }}>
+            <Text style={styles.title} size={13} color={TITLE_COLOR} numberOfLines={1}>{title}</Text>
             {closeBtnComponent}
           </View>
           {children}

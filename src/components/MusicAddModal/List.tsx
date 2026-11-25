@@ -6,10 +6,12 @@ import { useMyList } from '@/store/list/hook'
 import ListItem, { styles as listStyles } from './ListItem'
 import CreateUserList from './CreateUserList'
 import { useWindowSize } from '@/utils/hooks'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
 import { scaleSizeW } from '@/utils/pixelRatio'
+
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ccdcdbdb'
 
 const styles = createStyle({
   list: {
@@ -18,8 +20,6 @@ const styles = createStyle({
     paddingBottom: 5,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // backgroundColor: 'rgba(0,0,0,0.2)'
-    // justifyContent: 'center',
   },
 })
 const MIN_WIDTH = scaleSizeW(150)
@@ -30,16 +30,15 @@ const EditListItem = ({ itemWidth }: {
   itemWidth: number
 }) => {
   const [isEdit, setEdit] = useState(false)
-  const theme = useTheme()
   const t = useI18n()
 
   return (
     <View style={{ ...listStyles.listItem, width: itemWidth }}>
       <TouchableOpacity
-        style={{ ...listStyles.button, borderColor: theme['c-primary-light-200-alpha-700'], borderStyle: 'dashed' }}
+        style={{ ...listStyles.button, borderColor: HAMMER_LINE, borderStyle: 'dashed' }}
         onPress={() => { setEdit(true) }}
       >
-        <Text style={{ opacity: isEdit ? 0 : 1 }} numberOfLines={1} size={14} color={theme['c-button-font']}>{t('list_create')}</Text>
+        <Text style={{ opacity: isEdit ? 0 : 1 }} numberOfLines={1} size={14} color={HAMMER_TEXT}>{t('list_create')}</Text>
       </TouchableOpacity>
       {
         isEdit

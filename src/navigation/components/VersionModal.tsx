@@ -6,7 +6,6 @@ import { compareVer, sizeFormate } from '@/utils'
 import Button from '@/components/common/Button'
 import { updateApp } from '@/utils/version'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { type VersionInfo } from '@/store/version/state'
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
@@ -75,7 +74,6 @@ const Content = memo(({ title, newVersionInfo }: {
 
 const currentVer = process.versions.app
 const VersionModal = ({ componentId }: { componentId: string }) => {
-  const theme = useTheme()
   const t = useI18n()
   const versionInfo = useVersionInfo()
   const progress = useVersionDownloadProgressUpdated()
@@ -176,25 +174,25 @@ const VersionModal = ({ componentId }: { componentId: string }) => {
   return (
     <ModalContent>
       <Content title={title} newVersionInfo={versionInfo.newVersion} />
-      { tip.length ? <Text style={styles.tip} color={theme['c-primary-font']}>{tip}</Text> : null }
+      { tip.length ? <Text style={styles.tip} color={HAMMER_RED}>{tip}</Text> : null }
       <View style={styles.btns}>
         {
           ignoreBtn.show
             ? (
-                <Button disabled={ignoreBtn.disabled} style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={handleIgnore}>
-                  <Text color={theme['c-button-font']}>{ignoreBtn.text}</Text>
+                <Button disabled={ignoreBtn.disabled} style={ignoreBtn.disabled ? { ...styles.btn, ...styles.btnDisabled } : styles.btn} onPress={handleIgnore}>
+                  <Text size={14} color={ignoreBtn.disabled ? '#b0b0b0' : '#4d4d4d'} style={styles.btnText}>{ignoreBtn.text}</Text>
                 </Button>
               )
             : null
         }
-        <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={handleCancel}>
-          <Text color={theme['c-button-font']}>{closeBtnText}</Text>
+        <Button style={styles.btn} onPress={handleCancel}>
+          <Text size={14} color="#4d4d4d" style={styles.btnText}>{closeBtnText}</Text>
         </Button>
         {
           confirmBtn.show
             ? (
-                <Button disabled={confirmBtn.disabled} style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={handleConfirm}>
-                  <Text color={theme['c-button-font']}>{confirmBtn.text}</Text>
+                <Button disabled={confirmBtn.disabled} style={confirmBtn.disabled ? { ...styles.btn, ...styles.btnDisabled } : styles.btn} onPress={handleConfirm}>
+                  <Text size={14} color={confirmBtn.disabled ? '#b0b0b0' : '#4d4d4d'} style={styles.btnText}>{confirmBtn.text}</Text>
                 </Button>
               )
             : null
@@ -204,20 +202,24 @@ const VersionModal = ({ componentId }: { componentId: string }) => {
   )
 }
 
+const HAMMER_RED = '#E64040'
+const HAMMER_LINE = '#ccdcdbdb'
+
 const styles = createStyle({
   main: {
-    // flexGrow: 0,
     flexShrink: 1,
     marginTop: 15,
-    marginLeft: 15,
-    marginRight: 15,
+    marginLeft: 14,
+    marginRight: 14,
     marginBottom: 20,
   },
   content: {
     flexGrow: 0,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
     textAlign: 'center',
     marginBottom: 15,
   },
@@ -229,33 +231,44 @@ const styles = createStyle({
   },
   label: {
     fontSize: 14,
+    color: '#4d4d4d',
     marginBottom: 2,
   },
   desc: {
     fontSize: 13,
-    lineHeight: 18,
+    lineHeight: 19,
+    color: '#939396',
   },
   tip: {
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingLeft: 14,
+    paddingRight: 14,
     paddingBottom: 10,
+    fontSize: 13,
   },
   btns: {
     flexDirection: 'row',
     justifyContent: 'center',
     paddingBottom: 15,
-    paddingLeft: 15,
-    // paddingRight: 15,
+    paddingLeft: 14,
+    paddingRight: 14,
   },
   btn: {
     flex: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
+    height: 32,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#ffffff',
     borderRadius: 4,
-    marginRight: 15,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
+    marginRight: 10,
+  },
+  btnDisabled: {
+    backgroundColor: '#fafafa',
+    borderColor: '#e5e5e5',
+  },
+  btnText: {
+    fontWeight: 'bold',
   },
 })
 

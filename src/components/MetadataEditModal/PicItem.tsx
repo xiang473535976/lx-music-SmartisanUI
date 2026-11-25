@@ -1,13 +1,14 @@
 import { memo, useCallback, useRef } from 'react'
 
 import { TouchableOpacity, View } from 'react-native'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
 import Image from '@/components/common/Image'
 import FileSelect, { type FileSelectType } from '@/components/common/FileSelect'
-import { BorderWidths } from '@/theme'
 
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_RED = '#E64040'
+const HAMMER_LINE = '#ededed'
 
 export interface PicItemProps {
   value: string
@@ -17,7 +18,6 @@ export interface PicItemProps {
 }
 
 export default memo(({ value, label, onOnlineMatch, onChanged }: PicItemProps) => {
-  const theme = useTheme()
   const fileSelectRef = useRef<FileSelectType>(null)
   const handleRemoveFile = useCallback(() => {
     onChanged('')
@@ -34,16 +34,16 @@ export default memo(({ value, label, onOnlineMatch, onChanged }: PicItemProps) =
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.label} size={14}>{label}</Text>
+        <Text style={styles.label} size={13} color={HAMMER_TEXT}>{label}</Text>
         <View style={styles.btns}>
-          <TouchableOpacity onPress={handleRemoveFile}>
-            <Text size={13} color={theme['c-button-font']}>{global.i18n.t('metadata_edit_modal_form_remove_pic')}</Text>
+          <TouchableOpacity onPress={handleRemoveFile} activeOpacity={0.6}>
+            <Text size={13} color={HAMMER_TEXT}>{global.i18n.t('metadata_edit_modal_form_remove_pic')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={onOnlineMatch}>
-            <Text size={13} color={theme['c-button-font']}>{global.i18n.t('metadata_edit_modal_form_match_pic')}</Text>
+          <TouchableOpacity onPress={onOnlineMatch} activeOpacity={0.6}>
+            <Text size={13} color={HAMMER_RED}>{global.i18n.t('metadata_edit_modal_form_match_pic')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleShowSelectFile}>
-            <Text size={13} color={theme['c-button-font']}>{global.i18n.t('metadata_edit_modal_form_select_pic')}</Text>
+          <TouchableOpacity onPress={handleShowSelectFile} activeOpacity={0.6}>
+            <Text size={13} color={HAMMER_RED}>{global.i18n.t('metadata_edit_modal_form_select_pic')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -51,7 +51,7 @@ export default memo(({ value, label, onOnlineMatch, onChanged }: PicItemProps) =
         <Image
           url={value}
           cache={false}
-          style={{ ...styles.pic, borderColor: theme['c-border-background'] }}
+          style={{ ...styles.pic, borderColor: HAMMER_LINE }}
         />
       </View>
       <FileSelect ref={fileSelectRef} />
@@ -61,31 +61,31 @@ export default memo(({ value, label, onOnlineMatch, onChanged }: PicItemProps) =
 
 const styles = createStyle({
   container: {
-    // paddingLeft: 25,
-    marginBottom: 15,
+    marginBottom: 12,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 30,
+    marginBottom: 4,
   },
   label: {
-    marginBottom: 2,
+    fontWeight: 'bold',
   },
   btns: {
     flexDirection: 'row',
     gap: 15,
   },
   picContent: {
-    // backgroundColor: 'rgba(0,0,0,0.2)',
     marginTop: 5,
     position: 'relative',
   },
   pic: {
-    width: 180,
-    height: 180,
-    borderWidth: BorderWidths.normal,
-    borderStyle: 'dashed',
+    width: 140,
+    height: 140,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderStyle: 'solid',
   },
 })

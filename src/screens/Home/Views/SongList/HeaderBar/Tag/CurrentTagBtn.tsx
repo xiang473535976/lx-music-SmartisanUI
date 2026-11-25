@@ -1,5 +1,6 @@
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
+import { Icon } from '@/components/common/Icon'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
 import { forwardRef, useImperativeHandle, useState } from 'react'
@@ -26,7 +27,8 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
 
   return (
     <Button style={styles.btn} onPress={onShowList}>
-      <Text style={styles.sourceMenu}>{name}</Text>
+      <Text style={styles.sourceMenu} size={14} color="#4d4d4d" numberOfLines={1}>{name}</Text>
+      <Icon name="chevron-right" size={11} color="#939396" style={styles.arrow} />
     </Button>
   )
 })
@@ -34,16 +36,17 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
 
 const styles = createStyle({
   btn: {
-    paddingLeft: 15,
-    paddingRight: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 14,
+    paddingRight: 8,
     justifyContent: 'center',
   },
   sourceMenu: {
-    // height: 38,
-    // lineHeight: 38,
     textAlign: 'center',
-    // minWidth: 70,
-    // paddingTop: 10,
-    // paddingBottom: 10,
+  },
+  arrow: {
+    marginLeft: 2,
+    transform: [{ rotate: '90deg' }],
   },
 })

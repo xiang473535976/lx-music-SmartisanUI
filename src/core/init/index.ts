@@ -1,5 +1,6 @@
 import { initSetting, showPactModal } from '@/core/common'
 import registerPlaybackService from '@/plugins/player/service'
+import { initLocalMusicMeta } from '@/core/localMusicMeta'
 import initTheme from './theme'
 import initI18n from './i18n'
 import initUserApi from './userApi'
@@ -11,7 +12,6 @@ import { initDeeplink } from './deeplink'
 import { setApiSource } from '@/core/apiSource'
 import commonActions from '@/store/common/action'
 import settingState from '@/store/setting/state'
-import { checkUpdate } from '@/core/version'
 import { bootLog } from '@/utils/bootLog'
 import { cheatTip } from '@/utils/tools'
 
@@ -21,7 +21,6 @@ const handlePushedHomeScreen = async() => {
   if (settingState.setting['common.isAgreePact']) {
     if (isFirstPush) {
       isFirstPush = false
-      void checkUpdate()
       void initDeeplink()
     }
   } else {
@@ -57,6 +56,8 @@ export default async() => {
   bootLog('Player inited.')
   await dataInit(setting)
   bootLog('Data inited.')
+  await initLocalMusicMeta()
+  bootLog('Local music meta inited.')
   await initCommonState(setting)
   bootLog('Common State inited.')
 

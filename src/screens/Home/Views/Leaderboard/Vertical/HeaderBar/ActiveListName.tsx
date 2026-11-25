@@ -1,7 +1,6 @@
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 
-import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 
@@ -12,9 +11,10 @@ export interface ActiveListNameType {
   setBound: (id: string, name: string) => void
 }
 
+const HAMMER_SUB = '#939396'
+
 export default forwardRef<ActiveListNameType, ActiveListNameProps>(({ onShowBound }, ref) => {
-  const theme = useTheme()
-  let [currentListName, setCurrentListName] = useState('')
+  const [currentListName, setCurrentListName] = useState('')
 
   useImperativeHandle(ref, () => ({
     setBound(id, name) {
@@ -23,8 +23,8 @@ export default forwardRef<ActiveListNameType, ActiveListNameProps>(({ onShowBoun
   }), [])
 
   return (
-    <TouchableOpacity onPress={onShowBound} style={styles.currentList}>
-      <Text numberOfLines={1} style={styles.currentListText} color={theme['c-button-font']}>{currentListName}</Text>
+    <TouchableOpacity onPress={onShowBound} style={styles.currentList} activeOpacity={0.6}>
+      <Text numberOfLines={1} style={styles.currentListText} size={14} color={HAMMER_SUB}>{currentListName}</Text>
     </TouchableOpacity>
   )
 })
@@ -34,23 +34,11 @@ const styles = createStyle({
   currentList: {
     flex: 1,
     flexDirection: 'row',
-    paddingRight: 2,
-    // height: 36,
+    paddingRight: 12,
     alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.2)',
-  },
-  currentListIcon: {
-    paddingLeft: 15,
-    paddingRight: 10,
-    // paddingTop: 10,
-    // paddingBottom: 0,
+    justifyContent: 'flex-start',
   },
   currentListText: {
     flex: 1,
-    // minWidth: 70,
-    // paddingLeft: 10,
-    paddingRight: 10,
-    // paddingTop: 10,
-    // paddingBottom: 10,
   },
 })

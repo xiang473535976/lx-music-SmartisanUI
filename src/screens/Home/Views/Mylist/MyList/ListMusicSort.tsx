@@ -4,7 +4,7 @@ import Text from '@/components/common/Text'
 import { InteractionManager, View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { useI18n } from '@/lang'
-import CheckBox from '@/components/common/CheckBox'
+import ChoiceBar from '@/screens/Home/Views/Setting/components/ChoiceBar'
 import { getListMusics, setFetchingListStatus, updateListMusicPosition } from '@/core/list'
 import { sortListMusicInfo } from './utils'
 
@@ -12,7 +12,7 @@ const Title = ({ title }: {
   title: string
 }) => {
   return (
-    <Text style={styles.title} size={16}>
+    <Text style={styles.title} size={16} color={'#333333'}>
       {title}
     </Text>
   )
@@ -26,22 +26,6 @@ const fieldNames = ['name', 'singer', 'album', 'time', 'source'] as const
 const fieldTypes = ['up', 'down', 'random'] as const
 type FieldName = typeof fieldNames[number]
 type FieldType = typeof fieldTypes[number]
-const CheckBoxItem = <T extends FieldName | FieldType>({ id, isActive, disabled, change }: {
-  id: T
-  isActive: boolean
-  disabled?: boolean
-  change: (id: T) => void
-}) => {
-  const t = useI18n()
-  return (
-    <CheckBox
-      marginBottom={3}
-      disabled={disabled}
-      check={isActive}
-      label={t(`list_sort_modal_by_${id}`)}
-      onChange={() => { change(id) }} need />
-  )
-}
 const Form = forwardRef<FormType, {}>((props, ref) => {
   const t = useI18n()
   const [name, setName] = useState<FieldName>()
@@ -59,16 +43,18 @@ const Form = forwardRef<FormType, {}>((props, ref) => {
   return (
     <View>
       <View style={styles.formSection}>
-        <Text>{t('list_sort_modal_by_field')}</Text>
-        <View style={styles.formList}>
-          {fieldNames.map(n => <CheckBoxItem key={n} id={n} isActive={name == n} change={setName} disabled={type == 'random'} />)}
-        </View>
+        <Text size={13} color={'#939396'}>{t('list_sort_modal_by_field')}</Text>
+        <ChoiceBar
+          options={fieldNames.map(n => ({ id: n, label: t(`list_sort_modal_by_${n}`) }))}
+          activeId={name ?? ''}
+          onChange={(id) => { setName(id as FieldName) }} />
       </View>
       <View style={styles.formSection}>
-        <Text>{t('list_sort_modal_by_type')}</Text>
-        <View style={styles.formList}>
-          {fieldTypes.map(n => <CheckBoxItem key={n} id={n} isActive={type == n} change={setType} />)}
-        </View>
+        <Text size={13} color={'#939396'}>{t('list_sort_modal_by_type')}</Text>
+        <ChoiceBar
+          options={fieldTypes.map(n => ({ id: n, label: t(`list_sort_modal_by_${n}`) }))}
+          activeId={type ?? ''}
+          onChange={(id) => { setType(id as FieldType) }} />
       </View>
     </View>
   )
@@ -158,13 +144,10 @@ const styles = createStyle({
     textAlign: 'center',
     // paddingTop: 15,
     paddingBottom: 25,
+    fontWeight: 'bold',
   },
   formSection: {
-    marginBottom: 15,
-  },
-  formList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    marginBottom: 12,
   },
 })
 

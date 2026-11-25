@@ -1,16 +1,13 @@
 import { useRef, forwardRef, useImperativeHandle } from 'react'
 import { View } from 'react-native'
 
-// import music from '@/utils/musicSdk'
-import { BorderWidths } from '@/theme'
-// import InsetShadow from 'react-native-inset-shadow'
 import SourceSelector, {
   type SourceSelectorType as _SourceSelectorType,
   type SourceSelectorProps as _SourceSelectorProps,
 } from '@/components/SourceSelector'
 import SearchInput, { type SearchInputType, type SearchInputProps } from './SearchInput'
+import SearchTypeSelector from '../SearchTypeSelector'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
 import { type Source as MusicSource } from '@/store/search/music/state'
 import { type Source as SonglistSource } from '@/store/search/songlist/state'
 
@@ -36,7 +33,6 @@ export interface HeaderBarType {
 export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTipSearch, onSearch, onHideTipList, onShowTipList }, ref) => {
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const searchInputRef = useRef<SearchInputType>(null)
-  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     setSourceList(list, source) {
@@ -52,28 +48,43 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 
 
   return (
-    <View style={{ ...styles.searchBar, borderBottomColor: theme['c-border-background'] }}>
-      <View style={styles.selector}>
-        <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} center />
+    <View style={styles.container}>
+      <View style={styles.searchBar}>
+        <View style={styles.selector}>
+          <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} center />
+        </View>
+        <SearchTypeSelector style={styles.typeSelector} />
+        <SearchInput
+          ref={searchInputRef}
+          onChangeText={onTipSearch}
+          onSubmit={onSearch}
+          onBlur={onHideTipList}
+          onTouchStart={onShowTipList}
+        />
       </View>
-      <SearchInput
-        ref={searchInputRef}
-        onChangeText={onTipSearch}
-        onSubmit={onSearch}
-        onBlur={onHideTipList}
-        onTouchStart={onShowTipList}
-      />
     </View>
   )
 })
 
 const styles = createStyle({
+  container: {
+    backgroundColor: '#ffffff',
+  },
   searchBar: {
     flexDirection: 'row',
-    height: 38,
+    height: 46,
     zIndex: 2,
+    alignItems: 'center',
     paddingRight: 10,
-    borderBottomWidth: BorderWidths.normal,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
+  },
+  typeSelector: {
+    flexShrink: 0,
+    flexGrow: 0,
+    paddingLeft: 8,
+    paddingRight: 0,
   },
   selector: {
     // width: 86,

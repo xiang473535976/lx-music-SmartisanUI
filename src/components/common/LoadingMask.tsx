@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo, useRef, forwardRef, useImperativeHandle } from 'react'
 import { Animated } from 'react-native'
-import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
 import Loading from './Loading'
@@ -14,7 +13,6 @@ export interface LoadingMaskType {
 }
 
 export default forwardRef<LoadingMaskType, {}>((props, ref) => {
-  const theme = useTheme()
   const t = useI18n()
   const animFade = useRef(new Animated.Value(0)).current
   const [maskVisible, setMaskVisible] = useState(false)
@@ -57,10 +55,10 @@ export default forwardRef<LoadingMaskType, {}>((props, ref) => {
 
 
   const maskComponent = useMemo(() => (
-    <Animated.View style={{ ...styles.container, backgroundColor: theme['c-main-background'], opacity: animFade }}>
+    <Animated.View style={{ ...styles.container, backgroundColor: '#ffffff', opacity: animFade }}>
       <Loading size={25} label={t('list_loading')} />
     </Animated.View>
-  ), [animFade, t, theme])
+  ), [animFade, t])
 
   return maskVisible ? maskComponent : null
 })

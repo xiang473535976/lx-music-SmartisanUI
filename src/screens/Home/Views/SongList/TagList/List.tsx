@@ -69,7 +69,7 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
           list.length == 1
             ? (
                 <View style={styles.blankView}>
-                  <Text>{t('list_loading')}</Text>
+                  <Text size={13} color="#939396">{t('list_loading')}</Text>
                 </View>
               )
             : null
@@ -82,9 +82,10 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
 
 const styles = createStyle({
   tagContainer: {
-    paddingTop: 15,
-    paddingLeft: 15,
-    paddingBottom: 15,
+    paddingTop: 14,
+    paddingLeft: 14,
+    paddingRight: 4,
+    paddingBottom: 14,
   },
   blankView: {
     paddingTop: '15%',

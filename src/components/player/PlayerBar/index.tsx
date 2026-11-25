@@ -6,35 +6,34 @@ import Pic from './components/Pic'
 import Title from './components/Title'
 import PlayInfo from './components/PlayInfo'
 import ControlBtn from './components/ControlBtn'
-import { createStyle } from '@/utils/tools'
-// import { useSettingValue } from '@/store/setting/hook'
-import { useTheme } from '@/store/theme/hook'
+import { useProgress } from '@/store/player/hook'
 import { useSettingValue } from '@/store/setting/hook'
+import { createStyle } from '@/utils/tools'
 
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {
-  // const { onLayout, ...layout } = useLayout()
   const { keyboardShown } = useKeyboard()
-  const theme = useTheme()
   const autoHidePlayBar = useSettingValue('common.autoHidePlayBar')
+  const progress = useProgress().progress
 
   const playerComponent = useMemo(() => (
-    <View style={{ ...styles.container, backgroundColor: theme['c-content-background'] }}>
+    <View style={styles.container}>
       <Pic isHome={isHome} />
       <View style={styles.center}>
         <Title isHome={isHome} />
-        {/* <View style={{ ...styles.row, justifyContent: 'space-between' }}>
-          <PlayTime />
-        </View> */}
         <PlayInfo isHome={isHome} />
       </View>
       <View style={styles.right}>
         <ControlBtn />
       </View>
+      <View
+        style={{
+          ...styles.progressFill,
+          width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
+        }}
+      />
     </View>
-  ), [theme, isHome])
-
-  // console.log('render pb')
+  ), [isHome, progress])
 
   return autoHidePlayBar && keyboardShown ? null : playerComponent
 })
@@ -43,23 +42,21 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
 const styles = createStyle({
   container: {
     width: '100%',
-    // height: 100,
-    // paddingTop: progressContentPadding,
-    // marginTop: -progressContentPadding,
-    // backgroundColor: 'rgba(0, 0, 0, .1)',
-    // borderTopWidth: BorderWidths.normal2,
-    paddingVertical: 5,
-    paddingLeft: 5,
-    // backgroundColor: AppColors.primary,
-    // backgroundColor: 'red',
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
+    height: 58,
+    paddingLeft: 4,
     flexDirection: 'row',
     alignItems: 'center',
+    position: 'relative',
+    backgroundColor: '#ffffff',
+    // 锤子 shape_translucent_bg: corners radius 4dp + solid #80FFFFFF（半透明白叠在 tabbar 渐变上）
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    // 锤子 activity_main.xml 的 view_m1（@color/listBg = #ededed）
+    borderTopWidth: 0.5,
+    borderTopColor: '#ededed',
     elevation: 10,
   },
   left: {
-    // borderRadius: 3,
     flexGrow: 0,
     flexShrink: 0,
   },
@@ -67,11 +64,9 @@ const styles = createStyle({
     flexDirection: 'column',
     flexGrow: 1,
     flexShrink: 1,
-    paddingLeft: 5,
+    paddingLeft: 4,
     height: '100%',
-    // justifyContent: 'space-evenly',
-    // height: 48,
-    // backgroundColor: 'rgba(0, 0, 0, .1)',
+    justifyContent: 'center',
   },
   right: {
     flexDirection: 'row',
@@ -81,9 +76,11 @@ const styles = createStyle({
     paddingLeft: 5,
     paddingRight: 5,
   },
-  // row: {
-  //   flexDirection: 'row',
-  //   flexGrow: 0,
-  //   flexShrink: 0,
-  // },
+  progressFill: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    height: 1.5,
+    backgroundColor: '#E64040',
+  },
 })

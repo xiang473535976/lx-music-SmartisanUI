@@ -11,7 +11,7 @@ export default () => {
 
   // const status = playerStatus.isPlay ? text : playerStatus.statusText
 
-  return <Text numberOfLines={1} size={13}>{statusText}</Text>
+  return <Text numberOfLines={1} size={12} color={'#939396'}>{statusText}</Text>
 }
 
 // const styles = createStyle({

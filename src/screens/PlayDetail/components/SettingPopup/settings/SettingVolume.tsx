@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import { View } from 'react-native'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { useSettingValue } from '@/store/setting/hook'
 import Slider, { type SliderProps } from '@/components/common/Slider'
@@ -12,7 +11,6 @@ import { setVolume } from '@/plugins/player'
 
 
 const Volume = () => {
-  const theme = useTheme()
   const volume = Math.trunc(useSettingValue('player.volume') * 100)
   const [sliderSize, setSliderSize] = useState(volume)
   const [isSliding, setSliding] = useState(false)
@@ -35,9 +33,9 @@ const Volume = () => {
 
   return (
     <View style={styles.container}>
-      <Text>{t('play_detail_setting_volume')}</Text>
+      <Text size={13} color={'#4d4d4d'} style={styles.title}>{t('play_detail_setting_volume')}</Text>
       <View style={styles.content}>
-        <Text style={styles.label} color={theme['c-font-label']}>{isSliding ? sliderSize : volume}</Text>
+        <Text style={styles.label} size={15}>{isSliding ? sliderSize : volume}</Text>
         <Slider
           minimumValue={0}
           maximumValue={100}

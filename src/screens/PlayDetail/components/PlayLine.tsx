@@ -3,8 +3,6 @@ import { type NativeScrollEvent, type NativeSyntheticEvent, View, TouchableOpaci
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
 import { type Lines } from 'lrc-file-parser'
-import { useTheme } from '@/store/theme/hook'
-import { BorderWidths } from '@/theme'
 import { formatPlayTime2 } from '@/utils'
 import { Icon } from '@/components/common/Icon'
 
@@ -21,9 +19,11 @@ export interface PlayLineProps {
 }
 
 const ANIMATION_DURATION = 300
+// 锤子风配色
+const HAMMER_RED = '#E64040'
+const HAMMER_RED_ALPHA = 'rgba(230, 64, 64, 0.7)'
 
 export default forwardRef<PlayLineType, PlayLineProps>(({ onPlayLine }, ref) => {
-  const theme = useTheme()
   const [scrollInfo, setScrollInfo] = useState<NativeSyntheticEvent<NativeScrollEvent>['nativeEvent'] | null>(null)
   const [listLayoutInfo, setListLayoutInfo] = useState<{ spaceHeight: number, lineHeights: number[] }>({ spaceHeight: 0, lineHeights: [] })
   const [lyricLines, setLyricLines] = useState<Lines>([])
@@ -82,11 +82,11 @@ export default forwardRef<PlayLineType, PlayLineProps>(({ onPlayLine }, ref) => 
   const timeLabel = formatPlayTime2(time / 1000)
   return (
     <Animated.View style={{ ...styles.playLine, opacity: opsAnim }}>
-      <Text style={styles.label} color={theme['c-primary-font']} size={13}>{timeLabel}</Text>
+      <Text style={styles.label} color={HAMMER_RED} size={13}>{timeLabel}</Text>
       <View style={styles.lineContent}>
-        <View style={{ ...styles.line, borderBottomColor: theme['c-primary-alpha-700'] }} />
+        <View style={{ ...styles.line, borderBottomColor: HAMMER_RED_ALPHA }} />
         <TouchableOpacity style={styles.button} onPress={handlePlayLine}>
-          <Icon name="play" color={theme['c-button-font']} size={18} />
+          <Icon name="play" color={HAMMER_RED} size={18} />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -124,7 +124,7 @@ const styles = createStyle({
   },
   line: {
     marginLeft: 30,
-    borderBottomWidth: BorderWidths.normal2,
+    borderBottomWidth: 0.5,
     borderStyle: 'dashed',
     flex: 1,
   },

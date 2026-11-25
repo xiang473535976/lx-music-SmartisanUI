@@ -5,6 +5,8 @@ import { log } from '@/utils/log'
 import { filterFileName, filterMusicList, formatPlayTime2, toNewMusicInfo } from '@/utils'
 import { handleImportListPart } from '@/screens/Home/Views/Setting/settings/Backup/actions'
 import { readMetadata, scanAudioFiles, type MusicMetadataFull } from '@/utils/localMediaMetadata'
+import { requestAudioPermission, scanMusic } from '@/utils/nativeModules/musicScanner'
+import { buildLocalMusicInfoByScanner } from '@/core/localMusic'
 import settingState from '@/store/setting/state'
 import BackgroundTimer from 'react-native-background-timer'
 import { type FileType } from '@/utils/fs'
@@ -125,7 +127,40 @@ export const buildLocalMusicInfo = (filePath: string, metadata: MusicMetadataFul
     },
   }
 }
-const createLocalMusicInfos = async(filePaths: string[], errorPath: string[]): Promise<LX.Music.MusicInfoLocal[]> => {
+/**
+ * 扫描设备本地音乐（MediaStore），并将扫描到的新歌曲添加到指定列表
+ */
+export const handleScanLocalMusic = async(listInfo: LX.List.MyListInfo) => {
+  setFetchingListStatus(listInfo.id, true)
+  try {
+    const granted = await requestAudioPermission()
+    if (!granted) {
+      toast(global.i18n.t('list_scan_local_music_permission_tip'), 'long')
+      return
+    }
+    const musics = await scanMusic()
+    if (!musics.length) {
+      toast(global.i18n.t('list_scan_local_music_empty_tip'), 'long')
+      return
+    }
+    const listMusics = await getListMusics(listInfo.id)
+    const existIds = new Set(listMusics.map(m => m.id))
+    const newMusics = musics.filter(m => !existIds.has(m.path)).map(buildLocalMusicInfoByScanner)
+    if (!newMusics.length) {
+      toast(global.i18n.t('list_scan_local_music_no_new_tip', { total: musics.length }), 'long')
+      return
+    }
+    await addListMusics(listInfo.id, newMusics, settingState.setting['list.addMusicLocationType'])
+    toast(global.i18n.t('list_scan_local_music_success_tip', { total: newMusics.length }), 'long')
+  } catch (err: any) {
+    log.error(err?.stack ?? String(err))
+    toast(global.i18n.t('list_scan_local_music_failed_tip'), 'long')
+  } finally {
+    setFetchingListStatus(listInfo.id, false)
+  }
+}
+
+export const createLocalMusicInfos = async(filePaths: string[], errorPath: string[]): Promise<LX.Music.MusicInfoLocal[]> => {
   const list: LX.Music.MusicInfoLocal[] = []
   filePaths = [...filePaths]
   while (filePaths.length) {

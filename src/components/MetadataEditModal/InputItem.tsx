@@ -3,9 +3,10 @@ import { memo } from 'react'
 import { StyleSheet, View } from 'react-native'
 import type { InputProps } from '@/components/common/Input'
 import Input from '@/components/common/Input'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 
+const HAMMER_TEXT = '#4d4d4d'
+const HAMMER_LINE = '#ccdcdbdb'
 
 export interface InputItemProps extends InputProps {
   value: string
@@ -14,14 +15,13 @@ export interface InputItemProps extends InputProps {
 }
 
 export default memo(({ value, label, onChanged, ...props }: InputItemProps) => {
-  const theme = useTheme()
   return (
     <View style={styles.container}>
-      <Text style={styles.label} size={14}>{label}</Text>
+      <Text style={styles.label} size={13} color={HAMMER_TEXT}>{label}</Text>
       <Input
         value={value}
         onChangeText={onChanged}
-        style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+        style={{ ...styles.input, backgroundColor: '#ffffff' }}
         {...props}
        />
     </View>
@@ -30,18 +30,19 @@ export default memo(({ value, label, onChanged, ...props }: InputItemProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    // paddingLeft: 25,
-    marginBottom: 15,
+    marginBottom: 12,
   },
   label: {
-    marginBottom: 2,
+    marginBottom: 4,
+    fontWeight: 'bold',
   },
   input: {
     flexGrow: 1,
     flexShrink: 1,
-    // borderRadius: 4,
-    // paddingTop: 3,
-    // paddingBottom: 3,
-    // maxWidth: 300,
+    height: 32,
+    paddingLeft: 8,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: HAMMER_LINE,
   },
 })

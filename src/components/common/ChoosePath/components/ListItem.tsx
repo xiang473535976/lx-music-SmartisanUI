@@ -1,7 +1,6 @@
 import { memo } from 'react'
 import { View, TouchableOpacity } from 'react-native'
 import { Icon } from '@/components/common/Icon'
-import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { type RowInfo, createStyle } from '@/utils/tools'
 
@@ -21,7 +20,6 @@ export default memo(({ item, onPress, rowInfo }: {
   onPress: (item: PathItem) => void
   rowInfo: RowInfo
 }) => {
-  const theme = useTheme()
 
   // const moreButtonRef = useRef()
   // const handleShowMenu = useCallback(() => {
@@ -40,23 +38,23 @@ export default memo(({ item, onPress, rowInfo }: {
           <View style={{ ...styles.listItem, opacity: 0.3 }}>
             <View style={styles.itemInfo}>
               <Text style={styles.listItemTitleText}>{item.name}</Text>
-              <Text style={styles.listItemDesc} size={12} color={theme['c-font-label']} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>
+              <Text style={styles.listItemDesc} size={12} color={'#939396'} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>
             </View>
             {
               item.isDir ? null
-                : <Text style={styles.size} size={12} color={theme['c-font-label']}>{item.sizeText}</Text>
+                : <Text style={styles.size} size={12} color={'#939396'}>{item.sizeText}</Text>
             }
           </View>
         ) : (
           <TouchableOpacity style={styles.listItem} onPress={ () => { onPress(item) } }>
             <View style={styles.itemInfo}>
               <Text style={styles.listItemTitleText}>{item.name}</Text>
-              <Text style={styles.listItemDesc} size={12} color={theme['c-font-label']} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>
+              <Text style={styles.listItemDesc} size={12} color={'#939396'} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>
             </View>
             {
               item.isDir
-                ? <Icon name="chevron-right" color={theme['c-primary-light-100-alpha-600']} size={18} />
-                : <Text style={styles.size} size={12} color={theme['c-font-label']}>{item.sizeText}</Text>
+                ? <Icon name="chevron-right" color={'#f4f4f4'} size={18} />
+                : <Text style={styles.size} size={12} color={'#939396'}>{item.sizeText}</Text>
             }
           </TouchableOpacity>
         )
@@ -68,18 +66,20 @@ export default memo(({ item, onPress, rowInfo }: {
 const styles = createStyle({
   listItem: {
     width: '100%',
+    minHeight: 52,
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 14,
+    paddingRight: 14,
     alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.1)',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ededed',
   },
   itemInfo: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
   listItemTitleText: {
     flexDirection: 'row',
@@ -92,8 +92,7 @@ const styles = createStyle({
     paddingTop: 2,
   },
   size: {
-    alignSelf: 'flex-end',
-    marginBottom: 10,
+    marginLeft: 8,
   },
 })
 

@@ -1,4 +1,3 @@
-import { useTheme } from '@/store/theme/hook'
 import { useMemo, useRef, useImperativeHandle, forwardRef } from 'react'
 import { Pressable, type PressableProps, StyleSheet, type View, type ViewProps } from 'react-native'
 // import { AppColors } from '@/theme'
@@ -18,12 +17,11 @@ export interface BtnType {
 }
 
 export default forwardRef<BtnType, BtnProps>(({ ripple: propsRipple = {}, disabled, children, style, ...props }, ref) => {
-  const theme = useTheme()
   const btnRef = useRef<View>(null)
   const ripple = useMemo(() => ({
-    color: theme['c-primary-light-200-alpha-700'],
+    color: '#f4f4f4',
     ...propsRipple,
-  }), [theme, propsRipple])
+  }), [propsRipple])
 
   useImperativeHandle(ref, () => ({
     measure(callback) {

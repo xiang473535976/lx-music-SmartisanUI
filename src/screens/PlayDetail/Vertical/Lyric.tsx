@@ -1,60 +1,59 @@
 import { memo, useMemo, useEffect, useRef, useCallback } from 'react'
-import { View, FlatList, type FlatListProps, type LayoutChangeEvent, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native'
-// import { useLayout } from '@/utils/hooks'
+import { View, FlatList, Image as RNImage, StyleSheet, type FlatListProps, type LayoutChangeEvent, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native'
 import { type Line, useLrcPlay, useLrcSet } from '@/plugins/lyric'
 import { createStyle } from '@/utils/tools'
-// import { useComponentIds } from '@/store/common/hook'
-import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
-import { AnimatedColorText } from '@/components/common/Text'
-import { setSpText } from '@/utils/pixelRatio'
 import playerState from '@/store/player/state'
 import { scrollTo } from '@/utils/scroll'
+import { useWindowSize } from '@/utils/hooks'
+import Text from '@/components/common/Text'
 import PlayLine, { type PlayLineType } from '../components/PlayLine'
-// import { screenkeepAwake } from '@/utils/nativeModules/utils'
-// import { log } from '@/utils/log'
-// import { toast } from '@/utils/tools'
+import { SmartisanImages } from '@/resources/smartisan'
 
 type FlatListType = FlatListProps<Line>
 
-// const useLock = () => {
-//   const showCommentRef = useRef(false)
+// 锤子 LyricsView 实测常量（LyricsView.java）
+// 当前行 ColorUtil.lyricsSelecte = argb(255, 50, 90, 177)、16sp（dimen/bigLyrics）
+// 其它行 @color/aboutSign = #FF5B5B5B、14sp（dimen/smallLyrics）
+// 行占位 = 行高 + line_height(40dp)/2 = 20dp
+const LRC_ACTIVE_COLOR = '#325AB1'
+const LRC_NORMAL_COLOR = '#5B5B5B'
+const LRC_ACTIVE_SIZE = 16
+const LRC_NORMAL_SIZE = 14
+const LRC_LINE_GAP = 20
+// 上下遮罩各 70dp（iv_lyrics_top_mask / iv_lyrics_bottom_mask）
+const MASK_HEIGHT = 70
+// 页面底色 pageBg = #FBF8F8
+const PAGE_BG = '#FBF8F8'
+// 锤子 play_activity.xml：iv_lyrics_bg 是 0dp×0dp 且四边约束到 rotate_rl（宽高比 1:1 的正方形），
+// ImageView 默认 scaleType=fitCenter，720×713 的位图按宽度铺满正方形。
+// 实测：位图宽 = 屏宽时，渲染出的圆盘（含模糊边缘）占屏宽 0.852；
+// 锤子官方截图上同一张图的圆盘占屏宽 0.804 → 位图渲染宽 = 0.804 / 0.852 ≈ 0.944 屏宽
+const BG_SIZE_RATIO = 0.944
 
+// 用多段半透明叠层模拟「pageBg → 透明」的线性渐变，避免引入渐变库
+const EdgeMask = memo(({ position }: { position: 'top' | 'bottom' }) => {
+  const steps = useMemo(() => {
+    const layers: { h: number, color: string }[] = []
+    const count = 10
+    for (let i = 0; i < count; i++) {
+      const alpha = 1 - i / (count - 1) * 0.92
+      layers.push({
+        h: MASK_HEIGHT / count,
+        color: `rgba(251, 248, 248, ${alpha.toFixed(3)})`,
+      })
+    }
+    return position == 'top' ? layers : layers.slice().reverse()
+  }, [position])
 
-//   useEffect(() => {
-//     let appstateListener = AppState.addEventListener('change', (state) => {
-//       switch (state) {
-//         case 'active':
-//           if (showLyricRef.current && !showCommentRef.current) screenkeepAwake()
-//           break
-//         case 'background':
-//           screenUnkeepAwake()
-//           break
-//       }
-//     })
-//     return () => {
-//       appstateListener.remove()
-//     }
-//   }, [])
-//   useEffect(() => {
-//     let listener: ReturnType<typeof onNavigationComponentDidDisappearEvent>
-//     showCommentRef.current = !!componentIds.comment
-//     if (showCommentRef.current) {
-//       if (showLyricRef.current) screenUnkeepAwake()
-//       listener = onNavigationComponentDidDisappearEvent(componentIds.comment as string, () => {
-//         if (showLyricRef.current && AppState.currentState == 'active') screenkeepAwake()
-//       })
-//     }
-
-//     const rm = global.state_event.on('componentIdsUpdated', (ids) => {
-
-//     })
-
-//     return () => {
-//       if (listener) listener.remove()
-//     }
-//   }, [])
-// }
+  return (
+    <View pointerEvents="none" style={{ ...styles.mask, [position]: 0 }}>
+      {steps.map((layer, index) => (
+        <View key={index} style={{ height: layer.h, backgroundColor: layer.color }} />
+      ))}
+    </View>
+  )
+})
 
 interface LineProps {
   line: Line
@@ -63,53 +62,40 @@ interface LineProps {
   onLayout: (lineNum: number, height: number, width: number) => void
 }
 const LrcLine = memo(({ line, lineNum, activeLine, onLayout }: LineProps) => {
-  const theme = useTheme()
-  const lrcFontSize = useSettingValue('playDetail.vertical.style.lrcFontSize')
   const textAlign = useSettingValue('playDetail.style.align')
-  const size = lrcFontSize / 10
-  const lineHeight = setSpText(size) * 1.3
-
-  const colors = useMemo(() => {
-    const active = activeLine == lineNum
-    return active ? [
-      theme['c-primary'],
-      theme['c-primary-alpha-200'],
-      1,
-    ] as const : [
-      theme['c-350'],
-      theme['c-300'],
-      0.6,
-    ] as const
-  }, [activeLine, lineNum, theme])
+  const active = activeLine == lineNum
 
   const handleLayout = ({ nativeEvent }: LayoutChangeEvent) => {
     onLayout(lineNum, nativeEvent.layout.height, nativeEvent.layout.width)
   }
 
-
   // textBreakStrategy="simple" 用于解决某些设备上字体被截断的问题
-  // https://stackoverflow.com/a/72822360
   return (
     <View style={styles.line} onLayout={handleLayout}>
-      <AnimatedColorText style={{
-        ...styles.lineText,
-        textAlign,
-        lineHeight,
-      }} textBreakStrategy="simple" color={colors[0]} opacity={colors[2]} size={size}>{line.text}</AnimatedColorText>
+      <Text
+        style={{ ...styles.lineText, textAlign }}
+        textBreakStrategy="simple"
+        color={active ? LRC_ACTIVE_COLOR : LRC_NORMAL_COLOR}
+        size={active ? LRC_ACTIVE_SIZE : LRC_NORMAL_SIZE}
+      >{line.text}</Text>
       {
         line.extendedLyrics.map((lrc, index) => {
-          return (<AnimatedColorText style={{
-            ...styles.lineTranslationText,
-            textAlign,
-            lineHeight: lineHeight * 0.8,
-          }} textBreakStrategy="simple" key={index} color={colors[1]} opacity={colors[2]} size={size * 0.8}>{lrc}</AnimatedColorText>)
+          return (
+            <Text
+              style={{ ...styles.lineTranslationText, textAlign }}
+              textBreakStrategy="simple"
+              key={index}
+              color={LRC_NORMAL_COLOR}
+              size={LRC_NORMAL_SIZE - 2}
+            >{lrc}</Text>
+          )
         })
       }
     </View>
   )
 }, (prevProps, nextProps) => {
   return prevProps.line === nextProps.line &&
-    prevProps.activeLine != nextProps.lineNum &&
+    prevProps.activeLine != prevProps.lineNum &&
     nextProps.activeLine != nextProps.lineNum
 })
 const wait = async() => new Promise(resolve => setTimeout(resolve, 100))
@@ -128,29 +114,18 @@ export default () => {
   const listLayoutInfoRef = useRef<{ spaceHeight: number, lineHeights: number[] }>({ spaceHeight: 0, lineHeights: [] })
   const scrollCancelRef = useRef<(() => void) | null>(null)
   const isShowLyricProgressSetting = useSettingValue('playDetail.isShowLyricProgressSetting')
-  // useLock()
-  // const [imgUrl, setImgUrl] = useState(null)
-  // const theme = useGetter('common', 'theme')
-  // const { onLayout, ...layout } = useLayout()
+  const { width: winWidth } = useWindowSize()
+  const bgSize = useMemo(() => Math.round(winWidth * BG_SIZE_RATIO), [winWidth])
 
-  // useEffect(() => {
-  //   const url = playMusicInfo ? playMusicInfo.musicInfo.img : null
-  //   if (imgUrl == url) return
-  //   setImgUrl(url)
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [playMusicInfo])
-
-  // const imgWidth = useMemo(() => layout.width * 0.75, [layout.width])
   const handleScrollToActive = (index = lineRef.current.line) => {
     if (index < 0) return
     if (flatListRef.current) {
-      // console.log('handleScrollToActive', index)
       if (scrollInfoRef.current && lineRef.current.line - lineRef.current.prevLine == 1) {
         let offset = listLayoutInfoRef.current.spaceHeight
-        for (let line = 0; line < index; line++) {
-          offset += listLayoutInfoRef.current.lineHeights[line]
+        for (let lineIdx = 0; lineIdx < index; lineIdx++) {
+          offset += listLayoutInfoRef.current.lineHeights[lineIdx]
         }
-        offset += (listLayoutInfoRef.current.lineHeights[line] ?? 0) / 2
+        offset += (listLayoutInfoRef.current.lineHeights[index] ?? 0) / 2
         try {
           scrollCancelRef.current = scrollTo(flatListRef.current, scrollInfoRef.current, offset - scrollInfoRef.current.layoutMeasurement.height * 0.42, 600, () => {
             scrollCancelRef.current = null
@@ -207,7 +182,6 @@ export default () => {
     }, 3000)
   }
 
-
   useEffect(() => {
     return () => {
       if (delayScrollTimeout.current) {
@@ -222,7 +196,6 @@ export default () => {
   }, [])
 
   useEffect(() => {
-    // linesRef.current = lyricLines
     listLayoutInfoRef.current.lineHeights = []
     lineRef.current.prevLine = 0
     lineRef.current.line = 0
@@ -309,56 +282,75 @@ export default () => {
   ), [handleSpaceLayout])
 
   return (
-    <>
+    <View style={styles.root}>
+      {/* 锤子歌词页：静态遮罩位图居中铺底（mask_playing_lyric.png 本身是圆盘，非运行时模糊） */}
+      <View pointerEvents="none" style={styles.bgWrap}>
+        <RNImage source={SmartisanImages.playingLyricMask} style={{ width: bgSize, height: bgSize }} resizeMode="contain" />
+      </View>
       <FlatList
         data={lyricLines}
         renderItem={renderItem}
         keyExtractor={getkey}
         style={styles.container}
+        contentContainerStyle={styles.contentContainer}
         ref={flatListRef}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={spaceComponent}
         ListFooterComponent={spaceComponent}
         onScrollBeginDrag={handleScrollBeginDrag}
         onScrollEndDrag={onScrollEndDrag}
-        fadingEdgeLength={100}
         initialNumToRender={Math.max(line + 10, 10)}
         onScrollToIndexFailed={handleScrollToIndexFailed}
         onScroll={handleScroll}
       />
+      <EdgeMask position="top" />
+      <EdgeMask position="bottom" />
       { isShowLyricProgressSetting ? <PlayLine ref={playLineRef} onPlayLine={handlePlayLine} /> : null }
-    </>
+    </View>
   )
 }
 
 const styles = createStyle({
+  root: {
+    flex: 1,
+    backgroundColor: PAGE_BG,
+  },
+  bgWrap: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
-    paddingLeft: 20,
-    paddingRight: 20,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
+  },
+  contentContainer: {
+    // 歌词左右 margin 4dp（lyrics_view 的 layout_marginStart/End）
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   space: {
     paddingTop: '100%',
   },
+  mask: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: MASK_HEIGHT,
+    zIndex: 2,
+  },
   line: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    // opacity: 0,
+    paddingTop: LRC_LINE_GAP / 2,
+    paddingBottom: LRC_LINE_GAP / 2,
   },
   lineText: {
     textAlign: 'center',
-    // fontSize: 16,
-    // lineHeight: 20,
-    // paddingTop: 5,
-    // paddingBottom: 5,
-    // opacity: 0,
   },
   lineTranslationText: {
     textAlign: 'center',
-    // fontSize: 13,
-    // lineHeight: 17,
-    paddingTop: 5,
-    // paddingBottom: 5,
+    paddingTop: 4,
   },
 })
