@@ -1,6 +1,7 @@
-import { useRef, useImperativeHandle, forwardRef, useState } from 'react'
+import { useRef, useImperativeHandle, forwardRef } from 'react'
 import { useI18n } from '@/lang'
-import Menu, { type Menus, type MenuType, type Position } from '@/components/common/Menu'
+import type { Position } from '@/components/common/Menu'
+import ActionSheetMenu, { type ActionSheetMenuType, type ActionItem } from '@/components/common/ActionSheetMenu'
 import { hasDislike } from '@/core/dislikeList'
 import { hasMusicUrlByMusic } from '@/utils/data'
 
@@ -25,7 +26,7 @@ export interface ListMenuProps {
   onDislikeMusic: (selectInfo: SelectInfo) => void
 }
 export interface ListMenuType {
-  show: (selectInfo: SelectInfo, position: Position) => void
+  show: (selectInfo: SelectInfo, position?: Position) => void
 }
 
 export type {
@@ -34,51 +35,38 @@ export type {
 
 export default forwardRef<ListMenuType, ListMenuProps>((props: ListMenuProps, ref) => {
   const t = useI18n()
-  const [visible, setVisible] = useState(false)
-  const menuRef = useRef<MenuType>(null)
+  const menuRef = useRef<ActionSheetMenuType>(null)
   const selectInfoRef = useRef<SelectInfo>(initSelectInfo as SelectInfo)
-  const [menus, setMenus] = useState<Menus>([])
 
   useImperativeHandle(ref, () => ({
-    show(selectInfo, position) {
+    show(selectInfo) {
       selectInfoRef.current = selectInfo
-      handleSetMenu(selectInfo.musicInfo)
-      if (visible) menuRef.current?.show(position)
-      else {
-        setVisible(true)
-        requestAnimationFrame(() => {
-          menuRef.current?.show(position)
-        })
-      }
+      const { items, menu } = handleSetMenu(selectInfo.musicInfo)
+      menuRef.current?.show(items, handleMenuPress)
+      void hasUrlCache(selectInfo.musicInfo).then((has_url_cache) => {
+        const target = menu.find(m => m.action == 'removeCache')
+        if (target && target.disabled != !has_url_cache) {
+          target.disabled = !has_url_cache
+          menuRef.current?.update([...menu])
+        }
+      })
     },
   }))
 
   const handleSetMenu = (musicInfo: LX.Music.MusicInfo) => {
-    let has_url_cache = false
-    const menu = [
-      { action: 'play', label: t('play') },
-      { action: 'playLater', label: t('play_later') },
-      // { action: 'download', label: '下载' },
-      { action: 'add', label: t('add_to') },
-      { action: 'copyName', label: t('copy_name') },
-      { action: 'musicSourceDetail', label: t('music_source_detail') },
-      { action: 'removeCache', disabled: !has_url_cache, label: t('list_remove_cache') },
-      { action: 'dislike', label: t('dislike'), disabled: hasDislike(musicInfo) },
+    const menu: ActionItem[] = [
+      { action: 'play', label: t('play'), icon: 'play' },
+      { action: 'playLater', label: t('play_later'), icon: 'play-outline' },
+      { action: 'add', label: t('add_to'), icon: 'add-music' },
+      { action: 'copyName', label: t('copy_name'), icon: 'share' },
+      { action: 'musicSourceDetail', label: t('music_source_detail'), icon: 'help' },
+      { action: 'removeCache', disabled: true, label: t('list_remove_cache'), icon: 'eraser' },
+      { action: 'dislike', label: t('dislike'), disabled: hasDislike(musicInfo), icon: 'thumbs-up' },
     ]
-    setMenus(menu)
-    void hasUrlCache(musicInfo).then((_has_url_cache) => {
-      let isUpdated = false
-      if (has_url_cache != _has_url_cache) {
-        has_url_cache = _has_url_cache
-        menu[menu.findIndex(m => m.action == 'removeCache')].disabled = !has_url_cache
-        isUpdated ||= true
-      }
-
-      if (isUpdated) setMenus([...menu])
-    })
+    return { items: menu, menu }
   }
 
-  const handleMenuPress = ({ action }: typeof menus[number]) => {
+  const handleMenuPress = (action: string) => {
     const selectInfo = selectInfoRef.current
     switch (action) {
       case 'play':
@@ -95,7 +83,6 @@ export default forwardRef<ListMenuType, ListMenuProps>((props: ListMenuProps, re
         break
       case 'musicSourceDetail':
         props.onMusicSourceDetail(selectInfo)
-        // setVIsibleMusicPosition(true)
         break
       case 'removeCache':
         props.onRemoveCache(selectInfo)
@@ -108,9 +95,5 @@ export default forwardRef<ListMenuType, ListMenuProps>((props: ListMenuProps, re
     }
   }
 
-  return (
-    visible
-      ? <Menu ref={menuRef} menus={menus} onPress={handleMenuPress} />
-      : null
-  )
+  return <ActionSheetMenu ref={menuRef} />
 })
