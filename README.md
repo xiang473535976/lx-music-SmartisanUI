@@ -44,7 +44,11 @@ npm start
 # 打包 Debug APK
 cd android
 ./gradlew :app:assembleDebug -PreactNativeArchitectures=arm64-v8a
-# 产物: android/app/build/outputs/apk/debug/lx-music-mobile-v1.9.2-arm64-v8a.apk
+# 产物: android/app/build/outputs/apk/debug/lx-music-mobile-v1.0.0-arm64-v8a.apk
+
+# 发布包（签名同 debug.keystore）
+./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a
+# 产物: android/app/build/outputs/apk/release/lx-music-mobile-v1.0.0-arm64-v8a.apk
 ```
 
 构建前需准备 `android/keystore.properties`（指向 `debug.keystore`），并设置 `JAVA_HOME` 为 JDK 17。
